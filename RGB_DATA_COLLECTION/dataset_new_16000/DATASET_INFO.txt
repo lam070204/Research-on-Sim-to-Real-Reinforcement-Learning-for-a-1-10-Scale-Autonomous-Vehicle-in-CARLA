@@ -1,0 +1,24 @@
+RGB DATASET FROM continuous_driver_rgb.py
+
+Camera source: CarlaEnvironmentRGB / CameraSensorRGBPPO
+Camera type: sensor.camera.rgb
+Width: 160
+Height: 80
+FPS: 30
+FOV: 125.0
+X: 1.898415
+Y: 0.0
+Z: 1.45
+Pitch: -16.5
+Yaw: 0.0
+Roll: 0.0
+
+Safe spawns: [1, 4, 6, 7, 8, 9, 10, 11]
+Images per spawn: 2000
+Target total: 16000
+Save every environment steps: 10
+Test interval: 10
+Minimum speed km/h: 1.0
+PPO model namespace: mapden_rgb
+PPO learning while collecting: False
+Weather: current CARLA world weather

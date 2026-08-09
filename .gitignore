@@ -1,0 +1,32 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Trained AI models / checkpoints
+*.pth
+*.pt
+*.ckpt
+*.engine
+
+# Temporary files
+*.log
+*.tmp
+
+# Python build
+build/
+dist/
+*.egg-info/

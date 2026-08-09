@@ -1,0 +1,762 @@
+﻿autoencoder_rgb\decoder_rgb.py:1: import os
+autoencoder_rgb\decoder_rgb.py:2: import torch
+autoencoder_rgb\decoder_rgb.py:3: import torch.nn as nn
+autoencoder_rgb\decoder_rgb.py:9: def __init__(self, latent_dims):
+autoencoder_rgb\decoder_rgb.py:15: "decoder_rgb.pth",
+autoencoder_rgb\decoder_rgb.py:19: nn.Linear(latent_dims, 1024),
+autoencoder_rgb\encoder_rgb.py:1: import os
+autoencoder_rgb\encoder_rgb.py:2: import torch
+autoencoder_rgb\encoder_rgb.py:3: import torch.nn as nn
+autoencoder_rgb\encoder_rgb.py:9: def __init__(self, latent_dims):
+autoencoder_rgb\encoder_rgb.py:15: "var_encoder_rgb.pth",
+autoencoder_rgb\encoder_rgb.py:39: self.mu = nn.Linear(1024, latent_dims)
+autoencoder_rgb\encoder_rgb.py:40: self.logvar = nn.Linear(1024, latent_dims)
+autoencoder_rgb\reconstructor_rgb.py:1: import os
+autoencoder_rgb\reconstructor_rgb.py:2: import torch
+autoencoder_rgb\reconstructor_rgb.py:3: import torchvision.transforms as transforms
+autoencoder_rgb\reconstructor_rgb.py:4: from torchvision import datasets
+autoencoder_rgb\reconstructor_rgb.py:5: from torchvision.utils import save_image
+autoencoder_rgb\reconstructor_rgb.py:6: from torch.utils.data import DataLoader
+autoencoder_rgb\reconstructor_rgb.py:8: from encoder_rgb import VariationalEncoderRGB
+autoencoder_rgb\reconstructor_rgb.py:9: from decoder_rgb import DecoderRGB
+autoencoder_rgb\reconstructor_rgb.py:16: "dataset_rgb_autopilot",
+autoencoder_rgb\reconstructor_rgb.py:23: "vae_rgb_best.pth",
+autoencoder_rgb\reconstructor_rgb.py:34: def __init__(self, latent_dims):
+autoencoder_rgb\reconstructor_rgb.py:36: self.encoder = VariationalEncoderRGB(latent_dims)
+autoencoder_rgb\reconstructor_rgb.py:37: self.decoder = DecoderRGB(latent_dims)
+autoencoder_rgb\reconstructor_rgb.py:54: checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+autoencoder_rgb\reconstructor_rgb.py:55: latent = checkpoint.get("latent_space", 95)
+autoencoder_rgb\reconstructor_rgb.py:57: model = VariationalAutoencoderRGB(latent).to(DEVICE)
+autoencoder_rgb\reconstructor_rgb.py:58: model.load_state_dict(checkpoint["model_state_dict"])
+autoencoder_rgb\vae_rgb.py:1: import os
+autoencoder_rgb\vae_rgb.py:2: import time
+autoencoder_rgb\vae_rgb.py:3: import torch
+autoencoder_rgb\vae_rgb.py:4: import torch.nn as nn
+autoencoder_rgb\vae_rgb.py:5: import torchvision.transforms as transforms
+autoencoder_rgb\vae_rgb.py:6: from torchvision import datasets
+autoencoder_rgb\vae_rgb.py:7: from torchvision.utils import save_image
+autoencoder_rgb\vae_rgb.py:8: from torch.utils.data import DataLoader
+autoencoder_rgb\vae_rgb.py:9: from torch.utils.tensorboard import SummaryWriter
+autoencoder_rgb\vae_rgb.py:11: from encoder_rgb import VariationalEncoderRGB
+autoencoder_rgb\vae_rgb.py:12: from decoder_rgb import DecoderRGB
+autoencoder_rgb\vae_rgb.py:18: LATENT_SPACE = 95
+autoencoder_rgb\vae_rgb.py:21: DATA_ROOT = os.path.join("autoencoder", "dataset_rgb_autopilot")
+autoencoder_rgb\vae_rgb.py:22: TRAIN_DIR = os.path.join(DATA_ROOT, "train")
+autoencoder_rgb\vae_rgb.py:23: TEST_DIR = os.path.join(DATA_ROOT, "test")
+autoencoder_rgb\vae_rgb.py:26: MODEL_DIR = os.path.join(OUTPUT_ROOT, "model")
+autoencoder_rgb\vae_rgb.py:30: BEST_MODEL_PATH = os.path.join(MODEL_DIR, "vae_rgb_best.pth")
+autoencoder_rgb\vae_rgb.py:31: LAST_MODEL_PATH = os.path.join(MODEL_DIR, "vae_rgb_last.pth")
+autoencoder_rgb\vae_rgb.py:37: def __init__(self, latent_dims):
+autoencoder_rgb\vae_rgb.py:39: self.encoder = VariationalEncoderRGB(latent_dims)
+autoencoder_rgb\vae_rgb.py:40: self.decoder = DecoderRGB(latent_dims)
+autoencoder_rgb\vae_rgb.py:110: os.makedirs(MODEL_DIR, exist_ok=True)
+autoencoder_rgb\vae_rgb.py:128: train_data = datasets.ImageFolder(TRAIN_DIR, transform=train_tf)
+autoencoder_rgb\vae_rgb.py:129: test_data = datasets.ImageFolder(TEST_DIR, transform=test_tf)
+autoencoder_rgb\vae_rgb.py:147: model = VariationalAutoencoderRGB(LATENT_SPACE).to(DEVICE)
+autoencoder_rgb\vae_rgb.py:176: checkpoint = {
+autoencoder_rgb\vae_rgb.py:178: "latent_space": LATENT_SPACE,
+autoencoder_rgb\vae_rgb.py:184: torch.save(checkpoint, LAST_MODEL_PATH)
+autoencoder_rgb\vae_rgb.py:188: torch.save(checkpoint, BEST_MODEL_PATH)
+autoencoder-semantic\dataset\decoder.py:1: import os
+autoencoder-semantic\dataset\decoder.py:2: import torch
+autoencoder-semantic\dataset\decoder.py:3: import torch.nn as nn
+autoencoder-semantic\dataset\decoder.py:10: def __init__(self, latent_dims):
+autoencoder-semantic\dataset\decoder.py:14: nn.Linear(latent_dims, 1024),
+autoencoder-semantic\dataset\encoder.py:1: import os
+autoencoder-semantic\dataset\encoder.py:2: import torch
+autoencoder-semantic\dataset\encoder.py:3: import torch.nn as nn
+autoencoder-semantic\dataset\encoder.py:10: def __init__(self, latent_dims):
+autoencoder-semantic\dataset\encoder.py:46: self.mu = nn.Linear(1024, latent_dims)
+autoencoder-semantic\dataset\encoder.py:47: self.sigma = nn.Linear(1024, latent_dims)
+autoencoder-semantic\dataset\encoder.py:78: # Dùng mean latent để PPO ổn định hơn.
+autoencoder-semantic\dataset\reconstructor.py:1: import os
+autoencoder-semantic\dataset\reconstructor.py:2: import sys
+autoencoder-semantic\dataset\reconstructor.py:3: import numpy as np
+autoencoder-semantic\dataset\reconstructor.py:4: import torch
+autoencoder-semantic\dataset\reconstructor.py:5: import torch.nn as nn
+autoencoder-semantic\dataset\reconstructor.py:6: import torch.optim as optim
+autoencoder-semantic\dataset\reconstructor.py:7: import torchvision.transforms as transforms
+autoencoder-semantic\dataset\reconstructor.py:8: from torchvision import datasets
+autoencoder-semantic\dataset\reconstructor.py:9: import torch.nn.functional as F
+autoencoder-semantic\dataset\reconstructor.py:10: from torch.utils.data import DataLoader, random_split
+autoencoder-semantic\dataset\reconstructor.py:11: from encoder import VariationalEncoder
+autoencoder-semantic\dataset\reconstructor.py:12: from decoder import Decoder
+autoencoder-semantic\dataset\reconstructor.py:13: from PIL import Image
+autoencoder-semantic\dataset\reconstructor.py:18: LATENT_SPACE = 95
+autoencoder-semantic\dataset\reconstructor.py:25: def __init__(self, latent_dims):
+autoencoder-semantic\dataset\reconstructor.py:28: self.encoder = VariationalEncoder(latent_dims)
+autoencoder-semantic\dataset\reconstructor.py:29: self.decoder = Decoder(latent_dims)
+autoencoder-semantic\dataset\reconstructor.py:57: model = VariationalAutoencoder(latent_dims=LATENT_SPACE).to(device)
+autoencoder-semantic\dataset\vae.py:1: import os
+autoencoder-semantic\dataset\vae.py:2: import sys
+autoencoder-semantic\dataset\vae.py:3: import torch
+autoencoder-semantic\dataset\vae.py:4: import torch.nn as nn
+autoencoder-semantic\dataset\vae.py:5: import torch.optim as optim
+autoencoder-semantic\dataset\vae.py:6: import torchvision.transforms as transforms
+autoencoder-semantic\dataset\vae.py:7: from torchvision import datasets
+autoencoder-semantic\dataset\vae.py:8: import torch.nn.functional as F
+autoencoder-semantic\dataset\vae.py:9: from torch.utils.data import DataLoader, random_split
+autoencoder-semantic\dataset\vae.py:10: from torch.utils.tensorboard import SummaryWriter
+autoencoder-semantic\dataset\vae.py:11: from encoder import VariationalEncoder
+autoencoder-semantic\dataset\vae.py:12: from decoder import Decoder
+autoencoder-semantic\dataset\vae.py:19: LATENT_SPACE = 95
+autoencoder-semantic\dataset\vae.py:26: def __init__(self, latent_dims):
+autoencoder-semantic\dataset\vae.py:29: self.encoder = VariationalEncoder(latent_dims)
+autoencoder-semantic\dataset\vae.py:30: self.decoder = Decoder(latent_dims)
+autoencoder-semantic\dataset\vae.py:102: model = VariationalAutoencoder(latent_dims=LATENT_SPACE).to(device)
+autoencoder-semantic\decoder_rgb.py:1: import os
+autoencoder-semantic\decoder_rgb.py:2: import torch
+autoencoder-semantic\decoder_rgb.py:3: import torch.nn as nn
+autoencoder-semantic\decoder_rgb.py:9: def __init__(self, latent_dims):
+autoencoder-semantic\decoder_rgb.py:15: "decoder_rgb.pth",
+autoencoder-semantic\decoder_rgb.py:19: nn.Linear(latent_dims, 1024),
+autoencoder-semantic\encoder_rgb.py:1: import os
+autoencoder-semantic\encoder_rgb.py:2: import torch
+autoencoder-semantic\encoder_rgb.py:3: import torch.nn as nn
+autoencoder-semantic\encoder_rgb.py:9: def __init__(self, latent_dims):
+autoencoder-semantic\encoder_rgb.py:15: "var_encoder_rgb.pth",
+autoencoder-semantic\encoder_rgb.py:39: self.mu = nn.Linear(1024, latent_dims)
+autoencoder-semantic\encoder_rgb.py:40: self.logvar = nn.Linear(1024, latent_dims)
+autoencoder-semantic\reconstructor_rgb.py:1: import os
+autoencoder-semantic\reconstructor_rgb.py:2: import torch
+autoencoder-semantic\reconstructor_rgb.py:3: import torchvision.transforms as transforms
+autoencoder-semantic\reconstructor_rgb.py:4: from torchvision import datasets
+autoencoder-semantic\reconstructor_rgb.py:5: from torchvision.utils import save_image
+autoencoder-semantic\reconstructor_rgb.py:6: from torch.utils.data import DataLoader
+autoencoder-semantic\reconstructor_rgb.py:8: from encoder_rgb import VariationalEncoderRGB
+autoencoder-semantic\reconstructor_rgb.py:9: from decoder_rgb import DecoderRGB
+autoencoder-semantic\reconstructor_rgb.py:16: "dataset_rgb_autopilot",
+autoencoder-semantic\reconstructor_rgb.py:23: "vae_rgb_best.pth",
+autoencoder-semantic\reconstructor_rgb.py:34: def __init__(self, latent_dims):
+autoencoder-semantic\reconstructor_rgb.py:36: self.encoder = VariationalEncoderRGB(latent_dims)
+autoencoder-semantic\reconstructor_rgb.py:37: self.decoder = DecoderRGB(latent_dims)
+autoencoder-semantic\reconstructor_rgb.py:54: checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+autoencoder-semantic\reconstructor_rgb.py:55: latent = checkpoint.get("latent_space", 95)
+autoencoder-semantic\reconstructor_rgb.py:57: model = VariationalAutoencoderRGB(latent).to(DEVICE)
+autoencoder-semantic\reconstructor_rgb.py:58: model.load_state_dict(checkpoint["model_state_dict"])
+autoencoder-semantic\vae_rgb.py:1: import os
+autoencoder-semantic\vae_rgb.py:2: import time
+autoencoder-semantic\vae_rgb.py:3: import torch
+autoencoder-semantic\vae_rgb.py:4: import torch.nn as nn
+autoencoder-semantic\vae_rgb.py:5: import torchvision.transforms as transforms
+autoencoder-semantic\vae_rgb.py:6: from torchvision import datasets
+autoencoder-semantic\vae_rgb.py:7: from torchvision.utils import save_image
+autoencoder-semantic\vae_rgb.py:8: from torch.utils.data import DataLoader
+autoencoder-semantic\vae_rgb.py:9: from torch.utils.tensorboard import SummaryWriter
+autoencoder-semantic\vae_rgb.py:11: from encoder_rgb import VariationalEncoderRGB
+autoencoder-semantic\vae_rgb.py:12: from decoder_rgb import DecoderRGB
+autoencoder-semantic\vae_rgb.py:18: LATENT_SPACE = 95
+autoencoder-semantic\vae_rgb.py:21: DATA_ROOT = os.path.join("autoencoder", "dataset_rgb_autopilot")
+autoencoder-semantic\vae_rgb.py:22: TRAIN_DIR = os.path.join(DATA_ROOT, "train")
+autoencoder-semantic\vae_rgb.py:23: TEST_DIR = os.path.join(DATA_ROOT, "test")
+autoencoder-semantic\vae_rgb.py:26: MODEL_DIR = os.path.join(OUTPUT_ROOT, "model")
+autoencoder-semantic\vae_rgb.py:30: BEST_MODEL_PATH = os.path.join(MODEL_DIR, "vae_rgb_best.pth")
+autoencoder-semantic\vae_rgb.py:31: LAST_MODEL_PATH = os.path.join(MODEL_DIR, "vae_rgb_last.pth")
+autoencoder-semantic\vae_rgb.py:37: def __init__(self, latent_dims):
+autoencoder-semantic\vae_rgb.py:39: self.encoder = VariationalEncoderRGB(latent_dims)
+autoencoder-semantic\vae_rgb.py:40: self.decoder = DecoderRGB(latent_dims)
+autoencoder-semantic\vae_rgb.py:110: os.makedirs(MODEL_DIR, exist_ok=True)
+autoencoder-semantic\vae_rgb.py:128: train_data = datasets.ImageFolder(TRAIN_DIR, transform=train_tf)
+autoencoder-semantic\vae_rgb.py:129: test_data = datasets.ImageFolder(TEST_DIR, transform=test_tf)
+autoencoder-semantic\vae_rgb.py:147: model = VariationalAutoencoderRGB(LATENT_SPACE).to(DEVICE)
+autoencoder-semantic\vae_rgb.py:176: checkpoint = {
+autoencoder-semantic\vae_rgb.py:178: "latent_space": LATENT_SPACE,
+autoencoder-semantic\vae_rgb.py:184: torch.save(checkpoint, LAST_MODEL_PATH)
+autoencoder-semantic\vae_rgb.py:188: torch.save(checkpoint, BEST_MODEL_PATH)
+code-nguyeban\continuous_drive_nguyenr.py:1: import os
+code-nguyeban\continuous_drive_nguyenr.py:2: import sys
+code-nguyeban\continuous_drive_nguyenr.py:3: import time
+code-nguyeban\continuous_drive_nguyenr.py:4: import random
+code-nguyeban\continuous_drive_nguyenr.py:5: import numpy as np
+code-nguyeban\continuous_drive_nguyenr.py:6: import argparse
+code-nguyeban\continuous_drive_nguyenr.py:7: import logging
+code-nguyeban\continuous_drive_nguyenr.py:8: import pickle
+code-nguyeban\continuous_drive_nguyenr.py:9: import torch
+code-nguyeban\continuous_drive_nguyenr.py:10: from distutils.util import strtobool
+code-nguyeban\continuous_drive_nguyenr.py:11: from datetime import datetime
+code-nguyeban\continuous_drive_nguyenr.py:12: from torch.utils.tensorboard import SummaryWriter
+code-nguyeban\continuous_drive_nguyenr.py:13: from encoder_init import EncodeState
+code-nguyeban\continuous_drive_nguyenr.py:14: from networks.on_policy.ppo.agent import PPOAgent
+code-nguyeban\continuous_drive_nguyenr.py:15: from simulation.connection import ClientConnection
+code-nguyeban\continuous_drive_nguyenr.py:16: from simulation.environment import CarlaEnvironment
+code-nguyeban\continuous_drive_nguyenr.py:17: from parameters import *
+code-nguyeban\continuous_drive_nguyenr.py:33: parser.add_argument('--load-checkpoint', type=boolean_string, default=MODEL_LOAD, help='resume training?')
+code-nguyeban\continuous_drive_nguyenr.py:67: checkpoint_load = args.load_checkpoint
+code-nguyeban\continuous_drive_nguyenr.py:73: f"Town: {town} | Load checkpoint: {checkpoint_load} | "
+code-nguyeban\continuous_drive_nguyenr.py:132: env = CarlaEnvironment(client, world,town, checkpoint_frequency=None)
+code-nguyeban\continuous_drive_nguyenr.py:133: encode = EncodeState(LATENT_DIM)
+code-nguyeban\continuous_drive_nguyenr.py:142: if checkpoint_load:
+code-nguyeban\continuous_drive_nguyenr.py:143: checkpoint_dir = f'checkpoints/PPO/{town}'
+code-nguyeban\continuous_drive_nguyenr.py:144: checkpoint_files = [
+code-nguyeban\continuous_drive_nguyenr.py:145: name for name in os.listdir(checkpoint_dir)
+code-nguyeban\continuous_drive_nguyenr.py:146: if name.startswith('checkpoint_ppo_') and name.endswith('.pickle')
+code-nguyeban\continuous_drive_nguyenr.py:149: if not checkpoint_files:
+code-nguyeban\continuous_drive_nguyenr.py:151: f'No PPO checkpoint metadata found in: {checkpoint_dir}'
+code-nguyeban\continuous_drive_nguyenr.py:154: checkpoint_files.sort(
+code-nguyeban\continuous_drive_nguyenr.py:156: name.replace('checkpoint_ppo_', '').replace('.pickle', '')
+code-nguyeban\continuous_drive_nguyenr.py:159: chkpt_file = os.path.join(checkpoint_dir, checkpoint_files[-1])
+code-nguyeban\continuous_drive_nguyenr.py:174: # the large training timestep stored in the checkpoint.
+code-nguyeban\continuous_drive_nguyenr.py:236: if checkpoint_load:
+code-nguyeban\continuous_drive_nguyenr.py:246: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
+code-nguyeban\continuous_drive_nguyenr.py:249: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+code-nguyeban\continuous_drive_nguyenr.py:276: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
+code-nguyeban\continuous_drive_nguyenr.py:277: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+code-nguyeban\continuous_drive_nguyenr.py:337: import traceback
+code-nguyeban\continuous_driver-old.py:1: import os
+code-nguyeban\continuous_driver-old.py:2: import sys
+code-nguyeban\continuous_driver-old.py:3: import time
+code-nguyeban\continuous_driver-old.py:4: import random
+code-nguyeban\continuous_driver-old.py:5: import numpy as np
+code-nguyeban\continuous_driver-old.py:6: import argparse
+code-nguyeban\continuous_driver-old.py:7: import logging
+code-nguyeban\continuous_driver-old.py:8: import pickle
+code-nguyeban\continuous_driver-old.py:9: import torch
+code-nguyeban\continuous_driver-old.py:10: from distutils.util import strtobool
+code-nguyeban\continuous_driver-old.py:11: from datetime import datetime
+code-nguyeban\continuous_driver-old.py:12: from torch.utils.tensorboard import SummaryWriter
+code-nguyeban\continuous_driver-old.py:13: from encoder_init import EncodeState
+code-nguyeban\continuous_driver-old.py:14: from networks.on_policy.ppo.agent import PPOAgent
+code-nguyeban\continuous_driver-old.py:15: from simulation.connection import ClientConnection
+code-nguyeban\continuous_driver-old.py:16: from simulation.environment import CarlaEnvironment
+code-nguyeban\continuous_driver-old.py:17: from parameters import *
+code-nguyeban\continuous_driver-old.py:33: parser.add_argument('--load-checkpoint', type=boolean_string, default=MODEL_LOAD, help='resume training?')
+code-nguyeban\continuous_driver-old.py:57: checkpoint_load = args.load_checkpoint
+code-nguyeban\continuous_driver-old.py:115: env = CarlaEnvironment(client, world,town, checkpoint_frequency=None)
+code-nguyeban\continuous_driver-old.py:116: encode = EncodeState(LATENT_DIM)
+code-nguyeban\continuous_driver-old.py:125: if checkpoint_load:
+code-nguyeban\continuous_driver-old.py:126: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2]) - 1
+code-nguyeban\continuous_driver-old.py:127: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+code-nguyeban\continuous_driver-old.py:191: if checkpoint_load:
+code-nguyeban\continuous_driver-old.py:201: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
+code-nguyeban\continuous_driver-old.py:204: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+code-nguyeban\continuous_driver-old.py:231: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
+code-nguyeban\continuous_driver-old.py:232: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+code-nguyeban\continuous_driver-old.py:292: import traceback
+code-nguyeban\environment - old2.py:1: import time
+code-nguyeban\environment - old2.py:2: import random
+code-nguyeban\environment - old2.py:3: import traceback
+code-nguyeban\environment - old2.py:4: import numpy as np
+code-nguyeban\environment - old2.py:5: import pygame
+code-nguyeban\environment - old2.py:6: from simulation.connection import carla
+code-nguyeban\environment - old2.py:7: from simulation.sensors import CameraSensor, CameraSensorEnv, CollisionSensor
+code-nguyeban\environment - old2.py:8: from simulation.settings import *
+code-nguyeban\environment - old2.py:13: def __init__(self, client, world, town, checkpoint_frequency=100, continuous_action=True) -> None:
+code-nguyeban\environment - old2.py:26: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment - old2.py:28: self.checkpoint_frequency = checkpoint_frequency
+code-nguyeban\environment - old2.py:54: # Two very important lists for keeping track of our actors and their observations.
+code-nguyeban\environment - old2.py:124: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment - old2.py:257: # Route is rebuilt at every reset, so checkpoint teleporting is
+code-nguyeban\environment - old2.py:259: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment - old2.py:330: self.checkpoint_waypoint_index
+code-nguyeban\environment - old2.py:454: It supports simple open roads, closed loops and basic junctions.
+code-nguyeban\environment - old2.py:632: # Extra very important methods: their names explain their purpose|
+code-nguyeban\environment.py:1: import time
+code-nguyeban\environment.py:2: import random
+code-nguyeban\environment.py:3: import traceback
+code-nguyeban\environment.py:4: import numpy as np
+code-nguyeban\environment.py:5: import pygame
+code-nguyeban\environment.py:6: from simulation.connection import carla
+code-nguyeban\environment.py:7: from simulation.sensors import CameraSensor, CameraSensorEnv, CollisionSensor, RGBDatasetCamera
+code-nguyeban\environment.py:9: from simulation.settings import *
+code-nguyeban\environment.py:14: def __init__(self, client, world, town, checkpoint_frequency=100, continuous_action=True) -> None:
+code-nguyeban\environment.py:27: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment.py:29: self.checkpoint_frequency = checkpoint_frequency
+code-nguyeban\environment.py:56: # Two very important lists for keeping track of our actors and their observations.
+code-nguyeban\environment.py:95: save_every=5,
+code-nguyeban\environment.py:96: max_images=20000,
+code-nguyeban\environment.py:133: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment.py:193: # This keeps the current checkpoint compatible while helping
+code-nguyeban\environment.py:278: # Route is rebuilt at every reset, so checkpoint teleporting is
+code-nguyeban\environment.py:280: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment.py:375: self.checkpoint_waypoint_index
+code-nguyeban\environment.py:499: It supports simple open roads, closed loops and basic junctions.
+code-nguyeban\environment.py:677: # Extra very important methods: their names explain their purpose|
+code-nguyeban\environment_old1.py:1: import time
+code-nguyeban\environment_old1.py:2: import random
+code-nguyeban\environment_old1.py:3: import numpy as np
+code-nguyeban\environment_old1.py:4: import pygame
+code-nguyeban\environment_old1.py:5: from simulation.connection import carla
+code-nguyeban\environment_old1.py:6: from simulation.sensors import CameraSensor, CameraSensorEnv, CollisionSensor
+code-nguyeban\environment_old1.py:7: from simulation.settings import *
+code-nguyeban\environment_old1.py:12: def __init__(self, client, world, town, checkpoint_frequency=100, continuous_action=True) -> None:
+code-nguyeban\environment_old1.py:25: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment_old1.py:27: self.checkpoint_frequency = checkpoint_frequency
+code-nguyeban\environment_old1.py:38: # Two very important lists for keeping track of our actors and their observations.
+code-nguyeban\environment_old1.py:135: # Teleport vehicle to last checkpoint
+code-nguyeban\environment_old1.py:136: waypoint = self.route_waypoints[self.checkpoint_waypoint_index % len(self.route_waypoints)]
+code-nguyeban\environment_old1.py:139: self.current_waypoint_index = self.checkpoint_waypoint_index
+code-nguyeban\environment_old1.py:234: # Update checkpoint for training
+code-nguyeban\environment_old1.py:236: if self.checkpoint_frequency is not None:
+code-nguyeban\environment_old1.py:237: self.checkpoint_waypoint_index = (self.current_waypoint_index // self.checkpoint_frequency) * self.checkpoint_frequency
+code-nguyeban\environment_old1.py:278: if self.checkpoint_frequency is not None:
+code-nguyeban\environment_old1.py:279: if self.checkpoint_frequency < self.total_distance//2:
+code-nguyeban\environment_old1.py:280: self.checkpoint_frequency += 2
+code-nguyeban\environment_old1.py:282: self.checkpoint_frequency = None
+code-nguyeban\environment_old1.py:283: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment_old1.py:297: self.distance_covered = abs(self.current_waypoint_index - self.checkpoint_waypoint_index)
+code-nguyeban\environment_old1.py:404: # Extra very important methods: their names explain their purpose|
+code-nguyeban\environment-chondiemspwan.py:1: import time
+code-nguyeban\environment-chondiemspwan.py:2: import random
+code-nguyeban\environment-chondiemspwan.py:3: import traceback
+code-nguyeban\environment-chondiemspwan.py:4: import numpy as np
+code-nguyeban\environment-chondiemspwan.py:5: import pygame
+code-nguyeban\environment-chondiemspwan.py:6: from simulation.connection import carla
+code-nguyeban\environment-chondiemspwan.py:7: from simulation.sensors import CameraSensor, CameraSensorEnv, CollisionSensor, RGBDatasetCamera
+code-nguyeban\environment-chondiemspwan.py:9: from simulation.settings import *
+code-nguyeban\environment-chondiemspwan.py:14: def __init__(self, client, world, town, checkpoint_frequency=100, continuous_action=True) -> None:
+code-nguyeban\environment-chondiemspwan.py:27: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment-chondiemspwan.py:29: self.checkpoint_frequency = checkpoint_frequency
+code-nguyeban\environment-chondiemspwan.py:56: # Two very important lists for keeping track of our actors and their observations.
+code-nguyeban\environment-chondiemspwan.py:95: save_every=5,
+code-nguyeban\environment-chondiemspwan.py:96: max_images=20000,
+code-nguyeban\environment-chondiemspwan.py:133: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment-chondiemspwan.py:193: # This keeps the current checkpoint compatible while helping
+code-nguyeban\environment-chondiemspwan.py:278: # Route is rebuilt at every reset, so checkpoint teleporting is
+code-nguyeban\environment-chondiemspwan.py:280: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment-chondiemspwan.py:375: self.checkpoint_waypoint_index
+code-nguyeban\environment-chondiemspwan.py:519: It supports simple open roads, closed loops and basic junctions.
+code-nguyeban\environment-chondiemspwan.py:697: # Extra very important methods: their names explain their purpose|
+code-nguyeban\environment-nguyenban.py:1: import time
+code-nguyeban\environment-nguyenban.py:2: import random
+code-nguyeban\environment-nguyenban.py:3: import traceback
+code-nguyeban\environment-nguyenban.py:4: import numpy as np
+code-nguyeban\environment-nguyenban.py:5: import pygame
+code-nguyeban\environment-nguyenban.py:6: from simulation.connection import carla
+code-nguyeban\environment-nguyenban.py:7: from simulation.sensors import CameraSensor, CameraSensorEnv, CollisionSensor, RGBCameraSensor
+code-nguyeban\environment-nguyenban.py:9: from simulation.settings import *
+code-nguyeban\environment-nguyenban.py:14: def __init__(self, client, world, town, checkpoint_frequency=100, continuous_action=True) -> None:
+code-nguyeban\environment-nguyenban.py:27: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment-nguyenban.py:29: self.checkpoint_frequency = checkpoint_frequency
+code-nguyeban\environment-nguyenban.py:55: # Two very important lists for keeping track of our actors and their observations.
+code-nguyeban\environment-nguyenban.py:122: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment-nguyenban.py:182: # This keeps the current checkpoint compatible while helping
+code-nguyeban\environment-nguyenban.py:267: # Route is rebuilt at every reset, so checkpoint teleporting is
+code-nguyeban\environment-nguyenban.py:269: self.checkpoint_waypoint_index = 0
+code-nguyeban\environment-nguyenban.py:364: self.checkpoint_waypoint_index
+code-nguyeban\environment-nguyenban.py:488: It supports simple open roads, closed loops and basic junctions.
+code-nguyeban\environment-nguyenban.py:666: # Extra very important methods: their names explain their purpose|
+code-nguyeban\sensors-old.py:1: import math
+code-nguyeban\sensors-old.py:2: import numpy as np
+code-nguyeban\sensors-old.py:3: import weakref
+code-nguyeban\sensors-old.py:4: import pygame
+code-nguyeban\sensors-old.py:5: from simulation.connection import carla
+code-nguyeban\sensors-old.py:6: from simulation.settings import RGB_CAMERA, SSC_CAMERA
+code-nguyeban\sensors-old.py:23: lambda image: CameraSensor._get_front_camera_data(weak_self, image))
+code-nguyeban\sensors-old.py:27: front_camera_bp = world.get_blueprint_library().find(self.sensor_name)
+code-nguyeban\sensors-old.py:28: front_camera_bp.set_attribute('image_size_x', f'160')
+code-nguyeban\sensors-old.py:29: front_camera_bp.set_attribute('image_size_y', f'80')
+code-nguyeban\sensors-old.py:30: front_camera_bp.set_attribute('fov', f'125')
+code-nguyeban\sensors-old.py:31: front_camera = world.spawn_actor(front_camera_bp, carla.Transform(
+code-nguyeban\sensors-old.py:36: def _get_front_camera_data(weak_self, image):
+code-nguyeban\sensors-old.py:95: # It's an important as it helps us to tract collisions
+collect_rgb_autopilot.py:1: import os
+collect_rgb_autopilot.py:2: import time
+collect_rgb_autopilot.py:3: import weakref
+collect_rgb_autopilot.py:4: import random
+collect_rgb_autopilot.py:5: from dataclasses import dataclass
+collect_rgb_autopilot.py:7: import numpy as np
+collect_rgb_autopilot.py:8: from PIL import Image
+collect_rgb_autopilot.py:10: from simulation.connection import carla
+collect_rgb_autopilot.py:11: from simulation.sensors import (
+collect_rgb_autopilot.py:12: FRONT_CAMERA_WIDTH,
+collect_rgb_autopilot.py:13: FRONT_CAMERA_HEIGHT,
+collect_rgb_autopilot.py:14: FRONT_CAMERA_FPS,
+collect_rgb_autopilot.py:15: FRONT_CAMERA_FOV,
+collect_rgb_autopilot.py:16: FRONT_CAMERA_X,
+collect_rgb_autopilot.py:17: FRONT_CAMERA_Y,
+collect_rgb_autopilot.py:18: FRONT_CAMERA_YAW,
+collect_rgb_autopilot.py:19: FRONT_CAMERA_ROLL,
+collect_rgb_autopilot.py:20: FRONT_CAMERA_Z,
+collect_rgb_autopilot.py:21: FRONT_CAMERA_PITCH,
+collect_rgb_autopilot.py:25: COLLECT_CAMERA_Z = FRONT_CAMERA_Z
+collect_rgb_autopilot.py:26: COLLECT_CAMERA_PITCH = FRONT_CAMERA_PITCH
+collect_rgb_autopilot.py:28: PORT = 2000
+collect_rgb_autopilot.py:29: TRAFFIC_MANAGER_PORT = 8000
+collect_rgb_autopilot.py:30: EXPECTED_MAP_KEYWORD = "mapden"
+collect_rgb_autopilot.py:32: SAVE_ROOT = os.path.join("autoencoder", "dataset_rgb_autopilot")
+collect_rgb_autopilot.py:33: TRAIN_DIR = os.path.join(SAVE_ROOT, "train", "rgb")
+collect_rgb_autopilot.py:34: TEST_DIR = os.path.join(SAVE_ROOT, "test", "rgb")
+collect_rgb_autopilot.py:36: MAX_IMAGES = 16000
+collect_rgb_autopilot.py:37: IMAGES_PER_SPAWN = 2000
+collect_rgb_autopilot.py:38: SAVE_EVERY = 10
+collect_rgb_autopilot.py:40: SAFE_SPAWN_NUMBERS = [1, 4, 6, 7, 8, 9, 10, 11]
+collect_rgb_autopilot.py:68: os.makedirs(TRAIN_DIR, exist_ok=True)
+collect_rgb_autopilot.py:69: os.makedirs(TEST_DIR, exist_ok=True)
+collect_rgb_autopilot.py:73: return count_png_files(TRAIN_DIR) + count_png_files(TEST_DIR)
+collect_rgb_autopilot.py:78: for directory in (TRAIN_DIR, TEST_DIR):
+collect_rgb_autopilot.py:123: camera_bp.set_attribute("image_size_x", str(FRONT_CAMERA_WIDTH))
+collect_rgb_autopilot.py:124: camera_bp.set_attribute("image_size_y", str(FRONT_CAMERA_HEIGHT))
+collect_rgb_autopilot.py:125: camera_bp.set_attribute("fov", str(FRONT_CAMERA_FOV))
+collect_rgb_autopilot.py:126: camera_bp.set_attribute("sensor_tick", str(1.0 / FRONT_CAMERA_FPS))
+collect_rgb_autopilot.py:147: carla.Location(x=FRONT_CAMERA_X, y=FRONT_CAMERA_Y, z=COLLECT_CAMERA_Z),
+collect_rgb_autopilot.py:150: yaw=FRONT_CAMERA_YAW,
+collect_rgb_autopilot.py:151: roll=FRONT_CAMERA_ROLL,
+collect_rgb_autopilot.py:180: if self.frame_count % SAVE_EVERY != 0:
+collect_rgb_autopilot.py:195: output_dir = TEST_DIR if self.saved_count % TEST_INTERVAL == 0 else TRAIN_DIR
+collect_rgb_autopilot.py:284: vehicle.set_autopilot(True, TRAFFIC_MANAGER_PORT)
+collect_rgb_autopilot.py:290: max_total_images=MAX_IMAGES,
+collect_rgb_autopilot.py:291: max_spawn_images=IMAGES_PER_SPAWN,
+collect_rgb_autopilot.py:297: print("Total dataset       : {}/{}".format(start_index, MAX_IMAGES))
+collect_rgb_autopilot.py:298: print("Images this spawn   : 0/{}".format(IMAGES_PER_SPAWN))
+collect_rgb_autopilot.py:301: print("Save every          : {} frames".format(SAVE_EVERY))
+collect_rgb_autopilot.py:327: MAX_IMAGES,
+collect_rgb_autopilot.py:329: IMAGES_PER_SPAWN,
+collect_rgb_autopilot.py:352: client = carla.Client(HOST, PORT)
+collect_rgb_autopilot.py:360: if EXPECTED_MAP_KEYWORD and EXPECTED_MAP_KEYWORD.lower() not in carla_map.name.lower():
+collect_rgb_autopilot.py:362: "Map hiện tại không phải '{}': {}".format(EXPECTED_MAP_KEYWORD, carla_map.name)
+collect_rgb_autopilot.py:365: traffic_manager = client.get_trafficmanager(TRAFFIC_MANAGER_PORT)
+collect_rgb_autopilot.py:370: number for number in SAFE_SPAWN_NUMBERS if 1 <= number <= len(spawn_points)
+collect_rgb_autopilot.py:379: if total_saved >= MAX_IMAGES:
+collect_rgb_autopilot.py:380: print("Dataset đã đủ {} ảnh.".format(MAX_IMAGES))
+collect_rgb_autopilot.py:386: while total_saved < MAX_IMAGES:
+collect_rgb_autopilot.py:389: if total_saved >= MAX_IMAGES:
+continuous_driver.py:1: import os
+continuous_driver.py:2: import sys
+continuous_driver.py:3: import time
+continuous_driver.py:4: import random
+continuous_driver.py:5: import numpy as np
+continuous_driver.py:6: import argparse
+continuous_driver.py:7: import logging
+continuous_driver.py:8: import pickle
+continuous_driver.py:9: import torch
+continuous_driver.py:10: from distutils.util import strtobool
+continuous_driver.py:11: from datetime import datetime
+continuous_driver.py:12: from torch.utils.tensorboard import SummaryWriter
+continuous_driver.py:13: from encoder_init import EncodeState
+continuous_driver.py:14: from networks.on_policy.ppo.agent import PPOAgent
+continuous_driver.py:15: from simulation.connection import ClientConnection
+continuous_driver.py:16: from simulation.environment import CarlaEnvironment
+continuous_driver.py:17: from parameters import *
+continuous_driver.py:33: parser.add_argument('--load-checkpoint', type=boolean_string, default=MODEL_LOAD, help='resume training?')
+continuous_driver.py:73: checkpoint_load = args.load_checkpoint
+continuous_driver.py:77: checkpoint_dir = os.path.join("checkpoints", "PPO", town)
+continuous_driver.py:78: pretrained_dir = os.path.join("preTrained_models", "PPO", town)
+continuous_driver.py:79: os.makedirs(checkpoint_dir, exist_ok=True)
+continuous_driver.py:82: print("Checkpoint directory:", checkpoint_dir)
+continuous_driver.py:87: f"Town: {town} | Load checkpoint: {checkpoint_load} | "
+continuous_driver.py:148: checkpoint_frequency=100 if train else None,
+continuous_driver.py:151: encode = EncodeState(LATENT_DIM)
+continuous_driver.py:160: if checkpoint_load:
+continuous_driver.py:161: checkpoint_dir = f'checkpoints/PPO/{town}'
+continuous_driver.py:162: checkpoint_files = [
+continuous_driver.py:163: name for name in os.listdir(checkpoint_dir)
+continuous_driver.py:164: if name.startswith('checkpoint_ppo_') and name.endswith('.pickle')
+continuous_driver.py:167: if not checkpoint_files:
+continuous_driver.py:169: f'No PPO checkpoint metadata found in: {checkpoint_dir}'
+continuous_driver.py:172: checkpoint_files.sort(
+continuous_driver.py:174: name.replace('checkpoint_ppo_', '').replace('.pickle', '')
+continuous_driver.py:177: chkpt_file = os.path.join(checkpoint_dir, checkpoint_files[-1])
+continuous_driver.py:192: # the large training timestep stored in the checkpoint.
+continuous_driver.py:292: if checkpoint_load:
+continuous_driver.py:345: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
+continuous_driver.py:348: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+continuous_driver.py:389: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{town}'))[2])
+continuous_driver.py:390: chkpt_file = f'checkpoints/PPO/{town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+continuous_driver.py:450: import traceback
+continuous_driver_rgb.py:1: import os
+continuous_driver_rgb.py:2: import sys
+continuous_driver_rgb.py:3: import time
+continuous_driver_rgb.py:4: import random
+continuous_driver_rgb.py:5: import numpy as np
+continuous_driver_rgb.py:6: import argparse
+continuous_driver_rgb.py:7: import logging
+continuous_driver_rgb.py:8: import pickle
+continuous_driver_rgb.py:9: import torch
+continuous_driver_rgb.py:10: from distutils.util import strtobool
+continuous_driver_rgb.py:11: from datetime import datetime
+continuous_driver_rgb.py:12: from torch.utils.tensorboard import SummaryWriter
+continuous_driver_rgb.py:13: from encoder_init_rgb import EncodeStateRGB
+continuous_driver_rgb.py:14: from networks.on_policy.ppo.agent import PPOAgent
+continuous_driver_rgb.py:15: from simulation.connection import ClientConnection
+continuous_driver_rgb.py:16: from simulation.environment_rgb import CarlaEnvironmentRGB
+continuous_driver_rgb.py:17: from parameters import *
+continuous_driver_rgb.py:33: parser.add_argument('--load-checkpoint', type=boolean_string, default=MODEL_LOAD, help='resume training?')
+continuous_driver_rgb.py:74: checkpoint_load = args.load_checkpoint
+continuous_driver_rgb.py:78: checkpoint_dir = os.path.join("checkpoints", "PPO", model_town)
+continuous_driver_rgb.py:79: pretrained_dir = os.path.join("preTrained_models", "PPO", model_town)
+continuous_driver_rgb.py:80: os.makedirs(checkpoint_dir, exist_ok=True)
+continuous_driver_rgb.py:83: print("Checkpoint directory:", checkpoint_dir)
+continuous_driver_rgb.py:88: f"Town: {town} | Load checkpoint: {checkpoint_load} | "
+continuous_driver_rgb.py:149: checkpoint_frequency=100 if train else None,
+continuous_driver_rgb.py:152: encode = EncodeStateRGB(LATENT_DIM)
+continuous_driver_rgb.py:161: if checkpoint_load:
+continuous_driver_rgb.py:162: checkpoint_dir = f'checkpoints/PPO/{model_town}'
+continuous_driver_rgb.py:163: checkpoint_files = [
+continuous_driver_rgb.py:164: name for name in os.listdir(checkpoint_dir)
+continuous_driver_rgb.py:165: if name.startswith('checkpoint_ppo_') and name.endswith('.pickle')
+continuous_driver_rgb.py:168: if not checkpoint_files:
+continuous_driver_rgb.py:170: f'No PPO checkpoint metadata found in: {checkpoint_dir}'
+continuous_driver_rgb.py:173: checkpoint_files.sort(
+continuous_driver_rgb.py:175: name.replace('checkpoint_ppo_', '').replace('.pickle', '')
+continuous_driver_rgb.py:178: chkpt_file = os.path.join(checkpoint_dir, checkpoint_files[-1])
+continuous_driver_rgb.py:193: # the large training timestep stored in the checkpoint.
+continuous_driver_rgb.py:293: if checkpoint_load:
+continuous_driver_rgb.py:346: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{model_town}'))[2])
+continuous_driver_rgb.py:349: chkpt_file = f'checkpoints/PPO/{model_town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+continuous_driver_rgb.py:390: chkt_file_nums = len(next(os.walk(f'checkpoints/PPO/{model_town}'))[2])
+continuous_driver_rgb.py:391: chkpt_file = f'checkpoints/PPO/{model_town}/checkpoint_ppo_'+str(chkt_file_nums)+'.pickle'
+continuous_driver_rgb.py:451: import traceback
+discrete_driver.py:1: import os
+discrete_driver.py:2: import sys
+discrete_driver.py:3: import time
+discrete_driver.py:4: import random
+discrete_driver.py:5: import numpy as np
+discrete_driver.py:6: import argparse
+discrete_driver.py:7: import logging
+discrete_driver.py:8: import pickle
+discrete_driver.py:9: import torch
+discrete_driver.py:10: from distutils.util import strtobool
+discrete_driver.py:11: from threading import Thread
+discrete_driver.py:12: from datetime import datetime
+discrete_driver.py:13: from torch.utils.tensorboard import SummaryWriter
+discrete_driver.py:14: from simulation.connection import ClientConnection
+discrete_driver.py:15: from simulation.environment import CarlaEnvironment
+discrete_driver.py:16: from networks.off_policy.ddqn.agent import DQNAgent
+discrete_driver.py:17: from encoder_init import EncodeState
+discrete_driver.py:18: from parameters import *
+discrete_driver.py:31: parser.add_argument('--load-checkpoint', type=bool, default=MODEL_LOAD, help='resume training?')
+discrete_driver.py:73: checkpoint_load = args.load_checkpoint
+discrete_driver.py:84: if checkpoint_load:
+discrete_driver.py:87: with open('checkpoints/DDQN/{town}/checkpoint_ddqn.pickle', 'rb') as f:
+discrete_driver.py:107: encode = EncodeState(LATENT_DIM)
+discrete_driver.py:117: if exp_name == 'ddqn' and checkpoint_load:
+discrete_driver.py:173: if checkpoint_load:
+discrete_driver.py:186: with open('checkpoints/DDQN/{town}/checkpoint_ddqn.pickle', 'wb') as handle:
+encoder_init.py:1: import sys
+encoder_init.py:2: import torch
+encoder_init.py:3: from autoencoder.encoder_rgb import VariationalEncoder
+encoder_init.py:7: def __init__(self, latent_dim):
+encoder_init.py:8: self.latent_dim = latent_dim
+encoder_init.py:15: self.latent_dim
+encoder_init_rgb.py:1: import torch
+encoder_init_rgb.py:2: import numpy as np
+encoder_init_rgb.py:3: from autoencoder_rgb.encoder_rgb import VariationalEncoderRGB
+encoder_init_rgb.py:7: def __init__(self, latent_dim):
+encoder_init_rgb.py:8: self.latent_dim = int(latent_dim)
+encoder_init_rgb.py:10: self.conv_encoder = VariationalEncoderRGB(self.latent_dim).to(self.device)
+encoder_init_rgb.py:15: print("RGB encoder loaded | latent={} | device={}".format(self.latent_dim, self.device))
+encoder_init_rgb.py:28: latent = self.conv_encoder(image_obs, sample=False)
+encoder_init_rgb.py:34: state = torch.cat((latent.view(-1), navigation_obs), dim=0)
+measure_map.py:1: import carla
+measure_map.py:2: import math
+measure_map.py:5: PORT = 2000
+measure_map.py:7: client = carla.Client(HOST, PORT)
+networks\off_policy\ddqn\agent.py:1: import torch
+networks\off_policy\ddqn\agent.py:2: import numpy as np
+networks\off_policy\ddqn\agent.py:3: from encoder_init import EncodeState
+networks\off_policy\ddqn\agent.py:4: from networks.off_policy.ddqn.dueling_dqn import DuelingDQnetwork
+networks\off_policy\ddqn\agent.py:5: from networks.off_policy.replay_buffer import ReplayBuffer
+networks\off_policy\ddqn\agent.py:6: from parameters import *
+networks\off_policy\ddqn\agent.py:20: #self.encode = EncodeState(LATENT_DIM)
+networks\off_policy\ddqn\agent.py:45: self.q_network_eval.save_checkpoint()
+networks\off_policy\ddqn\agent.py:46: self.q_network_target.save_checkpoint()
+networks\off_policy\ddqn\agent.py:49: self.q_network_eval.load_checkpoint()
+networks\off_policy\ddqn\agent.py:50: self.q_network_target.load_checkpoint()
+networks\off_policy\ddqn\dueling_dqn.py:1: import os
+networks\off_policy\ddqn\dueling_dqn.py:2: import torch
+networks\off_policy\ddqn\dueling_dqn.py:3: import torch.nn as nn
+networks\off_policy\ddqn\dueling_dqn.py:4: import torch.optim as optim
+networks\off_policy\ddqn\dueling_dqn.py:5: from parameters import DQN_LEARNING_RATE, DQN_CHECKPOINT_DIR, TOWN7
+networks\off_policy\ddqn\dueling_dqn.py:12: self.checkpoint_file = os.path.join(DQN_CHECKPOINT_DIR + '/' + TOWN7, model)
+networks\off_policy\ddqn\dueling_dqn.py:37: def save_checkpoint(self):
+networks\off_policy\ddqn\dueling_dqn.py:38: torch.save(self.state_dict(), self.checkpoint_file)
+networks\off_policy\ddqn\dueling_dqn.py:40: def load_checkpoint(self):
+networks\off_policy\ddqn\dueling_dqn.py:41: self.load_state_dict(torch.load(self.checkpoint_file))
+networks\off_policy\replay_buffer.py:1: import numpy as np
+networks\off_policy\replay_buffer.py:2: import torch
+networks\off_policy\replay_buffer.py:3: from parameters import BATCH_SIZE
+networks\on_policy\ppo\agent.py:1: import os
+networks\on_policy\ppo\agent.py:2: import numpy as np
+networks\on_policy\ppo\agent.py:4: import torch
+networks\on_policy\ppo\agent.py:5: import torch.nn as nn
+networks\on_policy\ppo\agent.py:6: # from encoder_init import EncodeState
+networks\on_policy\ppo\agent.py:7: from networks.on_policy.ppo.ppo import ActorCritic
+networks\on_policy\ppo\agent.py:8: from parameters import  *
+networks\on_policy\ppo\agent.py:33: self.action_dim = 2
+networks\on_policy\ppo\agent.py:39: # self.encode = EncodeState(LATENT_DIM)
+networks\on_policy\ppo\agent.py:43: self.checkpoint_file_no = 0
+networks\on_policy\ppo\agent.py:45: self.policy = ActorCritic(self.obs_dim, self.action_dim, self.action_std)
+networks\on_policy\ppo\agent.py:50: self.old_policy = ActorCritic(self.obs_dim, self.action_dim, self.action_std)
+networks\on_policy\ppo\agent.py:157: self.checkpoint_file_no = len(next(os.walk(PPO_CHECKPOINT_DIR+self.town))[2])
+networks\on_policy\ppo\agent.py:158: checkpoint_file = PPO_CHECKPOINT_DIR+self.town+"/ppo_policy_" + str(self.checkpoint_file_no)+"_.pth"
+networks\on_policy\ppo\agent.py:159: torch.save(self.old_policy.state_dict(), checkpoint_file)
+networks\on_policy\ppo\agent.py:162: self.checkpoint_file_no = len(next(os.walk(PPO_CHECKPOINT_DIR+self.town))[2])
+networks\on_policy\ppo\agent.py:163: if self.checkpoint_file_no !=0:
+networks\on_policy\ppo\agent.py:164: self.checkpoint_file_no -=1
+networks\on_policy\ppo\agent.py:165: checkpoint_file = PPO_CHECKPOINT_DIR+self.town+"/ppo_policy_" + str(self.checkpoint_file_no)+"_.pth"
+networks\on_policy\ppo\agent.py:166: torch.save(self.old_policy.state_dict(), checkpoint_file)
+networks\on_policy\ppo\agent.py:169: self.checkpoint_file_no = len(next(os.walk(PPO_CHECKPOINT_DIR+self.town))[2]) - 1
+networks\on_policy\ppo\agent.py:170: checkpoint_file = PPO_CHECKPOINT_DIR+self.town+"/ppo_policy_" + str(self.checkpoint_file_no)+"_.pth"
+networks\on_policy\ppo\agent.py:171: self.old_policy.load_state_dict(torch.load(checkpoint_file))
+networks\on_policy\ppo\agent.py:172: self.policy.load_state_dict(torch.load(checkpoint_file))
+networks\on_policy\ppo\ppo.py:1: import os
+networks\on_policy\ppo\ppo.py:2: import torch
+networks\on_policy\ppo\ppo.py:3: import torch.nn as nn
+networks\on_policy\ppo\ppo.py:4: import torch.optim as optim
+networks\on_policy\ppo\ppo.py:5: import numpy as np
+networks\on_policy\ppo\ppo.py:6: from torch.distributions import MultivariateNormal
+networks\on_policy\ppo\ppo.py:11: def __init__(self, obs_dim, action_dim, action_std_init):
+networks\on_policy\ppo\ppo.py:14: self.action_dim = action_dim
+networks\on_policy\ppo\ppo.py:19: self.cov_var = torch.full((self.action_dim,), action_std_init)
+networks\on_policy\ppo\ppo.py:32: nn.Linear(100, self.action_dim),
+networks\on_policy\ppo\ppo.py:51: self.cov_var = torch.full((self.action_dim,), new_action_std)
+parameters.py:17: LATENT_DIM = 95
+parameters.py:26: DQN_CHECKPOINT_DIR = 'preTrained_models/ddqn'
+parameters.py:37: PPO_CHECKPOINT_DIR = 'preTrained_models/ppo/'
+simulation\connection.py:1: import os
+simulation\connection.py:2: import sys
+simulation\connection.py:3: import glob
+simulation\connection.py:11: print('Couldn\'t import Carla egg properly')
+simulation\connection.py:13: import carla
+simulation\connection.py:14: from simulation.settings import PORT, TIMEOUT, HOST
+simulation\connection.py:25: self.client = carla.Client(HOST, PORT)
+simulation\environment.py:1: import time
+simulation\environment.py:2: import random
+simulation\environment.py:3: import traceback
+simulation\environment.py:4: import numpy as np
+simulation\environment.py:5: import pygame
+simulation\environment.py:6: from simulation.connection import carla
+simulation\environment.py:7: from simulation.sensors import CameraSensor, CameraSensorEnv, CollisionSensor, RGBDatasetCamera
+simulation\environment.py:9: from simulation.settings import *
+simulation\environment.py:19: checkpoint_frequency=100,
+simulation\environment.py:22: safe_spawn_numbers=None,
+simulation\environment.py:36: self.checkpoint_waypoint_index = 0
+simulation\environment.py:38: self.checkpoint_frequency = checkpoint_frequency
+simulation\environment.py:45: if safe_spawn_numbers is None:
+simulation\environment.py:46: safe_spawn_numbers = [1, 4, 6, 7, 8, 9, 10, 11]
+simulation\environment.py:48: self.safe_spawn_numbers = list(safe_spawn_numbers)
+simulation\environment.py:57: self.safe_spawn_indices = []
+simulation\environment.py:58: for spawn_number in self.safe_spawn_numbers:
+simulation\environment.py:61: self.safe_spawn_indices.append(index)
+simulation\environment.py:70: if not self.safe_spawn_indices:
+simulation\environment.py:75: self.spawn_order = list(self.safe_spawn_indices)
+simulation\environment.py:82: [index + 1 for index in self.safe_spawn_indices],
+simulation\environment.py:98: # Two very important lists for keeping track of our actors and their observations.
+simulation\environment.py:139: save_every=5,
+simulation\environment.py:140: max_images=20000,
+simulation\environment.py:179: self.checkpoint_waypoint_index = 0
+simulation\environment.py:239: # This keeps the current checkpoint compatible while helping
+simulation\environment.py:324: # Route is rebuilt at every reset, so checkpoint teleporting is
+simulation\environment.py:326: self.checkpoint_waypoint_index = 0
+simulation\environment.py:421: self.checkpoint_waypoint_index
+simulation\environment.py:497: self.spawn_order = list(self.safe_spawn_indices)
+simulation\environment.py:511: [i + 1 for i in self.safe_spawn_indices],
+simulation\environment.py:530: for _ in range(len(self.safe_spawn_indices)):
+simulation\environment.py:556: It supports simple open roads, closed loops and basic junctions.
+simulation\environment.py:734: # Extra very important methods: their names explain their purpose|
+simulation\environment_rgb.py:1: import time
+simulation\environment_rgb.py:2: import random
+simulation\environment_rgb.py:3: import traceback
+simulation\environment_rgb.py:4: import weakref
+simulation\environment_rgb.py:5: import numpy as np
+simulation\environment_rgb.py:6: import pygame
+simulation\environment_rgb.py:7: from simulation.connection import carla
+simulation\environment_rgb.py:8: from simulation.sensors import (
+simulation\environment_rgb.py:11: FRONT_CAMERA_WIDTH,
+simulation\environment_rgb.py:12: FRONT_CAMERA_HEIGHT,
+simulation\environment_rgb.py:13: FRONT_CAMERA_FPS,
+simulation\environment_rgb.py:14: FRONT_CAMERA_FOV,
+simulation\environment_rgb.py:15: FRONT_CAMERA_X,
+simulation\environment_rgb.py:16: FRONT_CAMERA_Y,
+simulation\environment_rgb.py:17: FRONT_CAMERA_Z,
+simulation\environment_rgb.py:18: FRONT_CAMERA_PITCH,
+simulation\environment_rgb.py:19: FRONT_CAMERA_YAW,
+simulation\environment_rgb.py:20: FRONT_CAMERA_ROLL,
+simulation\environment_rgb.py:22: from simulation.settings import RGB_CAMERA
+simulation\environment_rgb.py:24: from simulation.settings import *
+simulation\environment_rgb.py:41: camera_bp.set_attribute("image_size_x", str(FRONT_CAMERA_WIDTH))
+simulation\environment_rgb.py:42: camera_bp.set_attribute("image_size_y", str(FRONT_CAMERA_HEIGHT))
+simulation\environment_rgb.py:43: camera_bp.set_attribute("fov", str(FRONT_CAMERA_FOV))
+simulation\environment_rgb.py:44: camera_bp.set_attribute("sensor_tick", str(1.0 / FRONT_CAMERA_FPS))
+simulation\environment_rgb.py:55: x=FRONT_CAMERA_X, y=FRONT_CAMERA_Y, z=FRONT_CAMERA_Z
+simulation\environment_rgb.py:58: pitch=FRONT_CAMERA_PITCH,
+simulation\environment_rgb.py:59: yaw=FRONT_CAMERA_YAW,
+simulation\environment_rgb.py:60: roll=FRONT_CAMERA_ROLL,
+simulation\environment_rgb.py:90: checkpoint_frequency=100,
+simulation\environment_rgb.py:93: safe_spawn_numbers=None,
+simulation\environment_rgb.py:107: self.checkpoint_waypoint_index = 0
+simulation\environment_rgb.py:109: self.checkpoint_frequency = checkpoint_frequency
+simulation\environment_rgb.py:116: if safe_spawn_numbers is None:
+simulation\environment_rgb.py:117: safe_spawn_numbers = [1, 4, 6, 7, 8, 9, 10, 11]
+simulation\environment_rgb.py:119: self.safe_spawn_numbers = list(safe_spawn_numbers)
+simulation\environment_rgb.py:128: self.safe_spawn_indices = []
+simulation\environment_rgb.py:129: for spawn_number in self.safe_spawn_numbers:
+simulation\environment_rgb.py:132: self.safe_spawn_indices.append(index)
+simulation\environment_rgb.py:141: if not self.safe_spawn_indices:
+simulation\environment_rgb.py:146: self.spawn_order = list(self.safe_spawn_indices)
+simulation\environment_rgb.py:153: [index + 1 for index in self.safe_spawn_indices],
+simulation\environment_rgb.py:169: # Two very important lists for keeping track of our actors and their observations.
+simulation\environment_rgb.py:238: self.checkpoint_waypoint_index = 0
+simulation\environment_rgb.py:298: # This keeps the current checkpoint compatible while helping
+simulation\environment_rgb.py:383: # Route is rebuilt at every reset, so checkpoint teleporting is
+simulation\environment_rgb.py:385: self.checkpoint_waypoint_index = 0
+simulation\environment_rgb.py:480: self.checkpoint_waypoint_index
+simulation\environment_rgb.py:556: self.spawn_order = list(self.safe_spawn_indices)
+simulation\environment_rgb.py:570: [i + 1 for i in self.safe_spawn_indices],
+simulation\environment_rgb.py:589: for _ in range(len(self.safe_spawn_indices)):
+simulation\environment_rgb.py:615: It supports simple open roads, closed loops and basic junctions.
+simulation\environment_rgb.py:793: # Extra very important methods: their names explain their purpose|
+simulation\sensors.py:1: import math
+simulation\sensors.py:2: import os
+simulation\sensors.py:3: import weakref
+simulation\sensors.py:5: import numpy as np
+simulation\sensors.py:6: import pygame
+simulation\sensors.py:7: from PIL import Image
+simulation\sensors.py:9: from simulation.connection import carla
+simulation\sensors.py:10: from simulation.settings import RGB_CAMERA, SSC_CAMERA
+simulation\sensors.py:18: FRONT_CAMERA_WIDTH = 160
+simulation\sensors.py:19: FRONT_CAMERA_HEIGHT = 80
+simulation\sensors.py:20: FRONT_CAMERA_FPS = 30
+simulation\sensors.py:21: FRONT_CAMERA_FOV = 125.0
+simulation\sensors.py:23: FRONT_CAMERA_X = 1.898415
+simulation\sensors.py:24: FRONT_CAMERA_Y = 0.0
+simulation\sensors.py:25: # FRONT_CAMERA_Z = 1.357832
+simulation\sensors.py:26: FRONT_CAMERA_Z = 1.45
+simulation\sensors.py:28: # FRONT_CAMERA_PITCH = -14.9
+simulation\sensors.py:29: FRONT_CAMERA_PITCH = -16.5
+simulation\sensors.py:30: FRONT_CAMERA_YAW = 0.0
+simulation\sensors.py:31: FRONT_CAMERA_ROLL = 0.0
+simulation\sensors.py:39: RGB_DATASET_TRAIN_DIR = os.path.join(RGB_DATASET_ROOT, "train", "rgb")
+simulation\sensors.py:40: RGB_DATASET_TEST_DIR = os.path.join(RGB_DATASET_ROOT, "test", "rgb")
+simulation\sensors.py:42: RGB_DATASET_SAVE_EVERY = 5
+simulation\sensors.py:43: RGB_DATASET_MAX_IMAGES = 100
+simulation\sensors.py:55: # Giữ nguyên tên CameraSensor để PPO/checkpoint cũ vẫn hoạt động.
+simulation\sensors.py:70: lambda image: CameraSensor._get_front_camera_data(
+simulation\sensors.py:77: camera_bp.set_attribute("image_size_x", str(FRONT_CAMERA_WIDTH))
+simulation\sensors.py:78: camera_bp.set_attribute("image_size_y", str(FRONT_CAMERA_HEIGHT))
+simulation\sensors.py:79: camera_bp.set_attribute("fov", str(FRONT_CAMERA_FOV))
+simulation\sensors.py:80: camera_bp.set_attribute("sensor_tick", str(1.0 / FRONT_CAMERA_FPS))
+simulation\sensors.py:84: x=FRONT_CAMERA_X,
+simulation\sensors.py:85: y=FRONT_CAMERA_Y,
+simulation\sensors.py:86: z=FRONT_CAMERA_Z,
+simulation\sensors.py:89: pitch=FRONT_CAMERA_PITCH,
+simulation\sensors.py:90: yaw=FRONT_CAMERA_YAW,
+simulation\sensors.py:91: roll=FRONT_CAMERA_ROLL,
+simulation\sensors.py:103: def _get_front_camera_data(weak_self, image):
+simulation\sensors.py:129: save_every=RGB_DATASET_SAVE_EVERY,
+simulation\sensors.py:130: max_images=RGB_DATASET_MAX_IMAGES,
+simulation\sensors.py:136: self.save_every = max(1, int(save_every))
+simulation\sensors.py:137: self.max_images = max(1, int(max_images))
+simulation\sensors.py:142: os.makedirs(RGB_DATASET_TRAIN_DIR, exist_ok=True)
+simulation\sensors.py:143: os.makedirs(RGB_DATASET_TEST_DIR, exist_ok=True)
+simulation\sensors.py:147: # global dataset stops at exactly max_images.
+simulation\sensors.py:149: name for name in os.listdir(RGB_DATASET_TRAIN_DIR)
+simulation\sensors.py:153: name for name in os.listdir(RGB_DATASET_TEST_DIR)
+simulation\sensors.py:170: camera_bp.set_attribute("image_size_x", str(FRONT_CAMERA_WIDTH))
+simulation\sensors.py:171: camera_bp.set_attribute("image_size_y", str(FRONT_CAMERA_HEIGHT))
+simulation\sensors.py:172: camera_bp.set_attribute("fov", str(FRONT_CAMERA_FOV))
+simulation\sensors.py:173: camera_bp.set_attribute("sensor_tick", str(1.0 / FRONT_CAMERA_FPS))
+simulation\sensors.py:206: x=FRONT_CAMERA_X,
+simulation\sensors.py:207: y=FRONT_CAMERA_Y,
+simulation\sensors.py:208: z=FRONT_CAMERA_Z,
+simulation\sensors.py:211: pitch=FRONT_CAMERA_PITCH,
+simulation\sensors.py:212: yaw=FRONT_CAMERA_YAW,
+simulation\sensors.py:213: roll=FRONT_CAMERA_ROLL,
+simulation\sensors.py:227: if self is None or self.saved_count >= self.max_images:
+simulation\sensors.py:231: if self.frame_count % self.save_every != 0:
+simulation\sensors.py:248: output_path = os.path.join(RGB_DATASET_TEST_DIR, filename)
+simulation\sensors.py:250: output_path = os.path.join(RGB_DATASET_TRAIN_DIR, filename)
+simulation\sensors.py:263: f"{self.saved_count}/{self.max_images} ảnh"
+simulation\sensors.py:266: if self.saved_count == self.max_images:
+simulation\sensors.py:269: f"{self.max_images} ảnh."
+simulation\settings.py:12: PORT = 2000

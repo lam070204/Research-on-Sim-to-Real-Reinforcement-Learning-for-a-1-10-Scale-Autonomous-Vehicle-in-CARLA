@@ -1,0 +1,12 @@
+﻿[OK]   numpy | version=1.21.1
+[OK]   PIL | version=9.4.0
+[OK]   torch | version=1.13.1+cu117
+[OK]   torchvision | version=0.14.1+cu117
+pygame 2.1.2 (SDL 2.0.18, Python 3.7.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+[OK]   pygame | version=2.1.2
+[FAIL] cv2 | ModuleNotFoundError("No module named 'cv2'")
+[OK]   project module simulation.connection
+[OK]   project module simulation.sensors
+[OK]   project module autoencoder_rgb.encoder_rgb
+[OK]   project module autoencoder_rgb.decoder_rgb
