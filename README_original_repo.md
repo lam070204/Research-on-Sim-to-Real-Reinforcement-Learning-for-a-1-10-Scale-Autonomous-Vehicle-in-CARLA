@@ -20,6 +20,8 @@ PPO state 100 chiều
 Steering + throttle
 ```
 ## Mô hình triển khai
+
+```text
 RGB 160×80×3
        ↓
       VAE
@@ -46,6 +48,7 @@ xe chạy
 reward
    ↓
 PPO dùng reward để sửa Actor/Critic
+```
 
 ## Pipeline Semantic
 
