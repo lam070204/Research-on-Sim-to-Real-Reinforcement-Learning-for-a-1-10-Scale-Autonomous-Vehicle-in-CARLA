@@ -297,7 +297,7 @@ Autonomous-Driving-in-Carla-using-Deep-Reinforcement-Learning/
 │   ├── reconstructor_rgb.py     # Reconstruct ảnh
 │   ├── model/                   # Model checkpoints
 │   └── reconstructed/           # Ảnh reconstructed
-├── autoencoder-semantic/         # Autoencoder semantic segmentation
+├── autoencoder_semantic/         # Autoencoder semantic segmentation
 ├── networks/
 │   ├── on_policy/
 │   │   └── ppo/

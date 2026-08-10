@@ -19,6 +19,33 @@ PPO state 100 chiều
         ↓
 Steering + throttle
 ```
+## Mô hình triển khai
+RGB 160×80×3
+       ↓
+      VAE
+       ↓
+     95 z
+       +
+ 5 trạng thái xe
+       ↓
+  STATE 100
+       ↓
+      PPO
+   ┌───┴────┐
+   ↓        ↓
+ Actor    Critic
+   ↓        ↓
+2 action   V(s)
+   ↓
+steer + throttle
+   ↓
+    CARLA
+   ↓
+xe chạy
+   ↓
+reward
+   ↓
+PPO dùng reward để sửa Actor/Critic
 
 ## Pipeline Semantic
 

@@ -3,7 +3,7 @@
 Train VAE RGB từ đầu bằng cả dữ liệu CŨ + MỚI (32.000 ảnh).
 
 Dữ liệu:
-- CŨ: autoencoder-semantic/dataset_rgb_autopilot
+- CŨ: autoencoder_semantic/dataset_rgb_autopilot
 - MỚI: RGB_DATA_COLLECTION/dataset_new_16000
 
 An toàn:
@@ -40,7 +40,7 @@ PROJECT_ROOT = os.path.dirname(
 
 OLD_DATA_ROOT = os.path.join(
     PROJECT_ROOT,
-    "autoencoder-semantic",
+    "autoencoder_semantic",
     "dataset_rgb_autopilot",
 )
 NEW_DATA_ROOT = os.path.join(
