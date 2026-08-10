@@ -313,7 +313,17 @@ Autonomous-Driving-in-Carla-using-Deep-Reinforcement-Learning/
 │   └── settings.py              # Configuration
 ├── checkpoints/PPO/             # PPO checkpoints
 ├── preTrained_models/           # Pre-trained models
-├── runs/                        # TensorBoard logs
+├── runs/                        # TensorBoard training logs
+│   ├── PPO_0.2_1000/            # Log PPO với 1000 steps
+│   ├── PPO_0.2_5000/            # Log PPO với 5000 steps
+│   ├── PPO_0.2_10000/           # Log PPO với 10000 steps
+│   ├── PPO_0.2_100000/          # Log PPO với 100k steps
+│   ├── PPO_0.2_500000/          # Log PPO với 500k steps
+│   │   ├── mapden/              # Log training trên map đơn giản
+│   │   └── bandoxethuc/         # Log training trên bản đồ thực tế
+│   ├── PPO_0.2_1000000/         # Log PPO với 1M steps
+│   ├── PPO_0.2_2000000_TEST/    # Log PPO test với 2M steps
+│   └── vae_rgb_*/               # Log training VAE cho RGB
 ├── docs/                        # Documentation chi tiết
 ├── continuous_driver_rgb_v2.py  # Main training script
 ├── encoder_init_rgb_v2.py       # Encoder initialization
@@ -328,7 +338,7 @@ Autonomous-Driving-in-Carla-using-Deep-Reinforcement-Learning/
 
 ### Yêu cầu:
 - Python 3.8+
-- CARLA 0.9.8
+- CARLA 0.9.13
 - PyTorch 1.8+
 - CUDA (khuyến khích)
 
@@ -338,10 +348,10 @@ pip install -r requirements.txt
 ```
 
 ### Cài đặt CARLA:
-1. Tải CARLA 0.9.8 từ https://carla.org/
+1. Tải CARLA 0.9.13 từ https://carla.org/
 2. Thêm CARLA egg vào Python path:
    ```bash
-   cp carla/carla-0.9.8-py3.7-win-amd64.egg <CARLA_ROOT>/PythonAPI/carla/dist/
+   cp carla/carla-0.9.13-py3.8-win-amd64.egg <CARLA_ROOT>/PythonAPI/carla/dist/
    ```
 
 ---

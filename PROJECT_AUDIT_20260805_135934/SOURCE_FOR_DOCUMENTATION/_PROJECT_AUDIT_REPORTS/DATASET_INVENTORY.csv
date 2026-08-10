@@ -1,4 +1,0 @@
-﻿"RelativePath","TrainImages","TestImages","TotalImages","TotalSizeMB","OldestImage","NewestImage","NewestFile"
-"autoencoder\dataset_rgb_autopilot","201","23","224","3.25","8/5/2026 1:03:33 PM","8/5/2026 1:04:47 PM","C:\Autonomous-Driving-in-Carla-using-Deep-Reinforcement-Learning - Copy\autoencoder\dataset_rgb_autopilot\train\rgb\rgb_000223_spawn_04_carla_00096152.png"
-"autoencoder-semantic\dataset","12000","2000","14000","37.36","7/24/2026 11:40:28 AM","7/24/2026 11:40:38 AM","C:\Autonomous-Driving-in-Carla-using-Deep-Reinforcement-Learning - Copy\autoencoder-semantic\dataset\train\class1\183087.png"
-"autoencoder-semantic\dataset_rgb_autopilot","14400","1600","16000","229.03","8/3/2026 10:55:51 PM","8/4/2026 12:24:58 AM","C:\Autonomous-Driving-in-Carla-using-Deep-Reinforcement-Learning - Copy\autoencoder-semantic\dataset_rgb_autopilot\train\rgb\rgb_015999_spawn_07_carla_03530612.png"

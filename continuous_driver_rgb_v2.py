@@ -13,7 +13,7 @@ from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 from PIL import Image
 from encoder_init_rgb_v2 import EncodeStateRGBV2
-from networks.on_policy.ppo.agent import PPOAgent
+from networks.on_policy.ppo.agent_v2 import PPOAgent
 from simulation.connection import ClientConnection
 from simulation.environment_rgb_v2 import CarlaEnvironmentRGB
 from simulation.sensors import (

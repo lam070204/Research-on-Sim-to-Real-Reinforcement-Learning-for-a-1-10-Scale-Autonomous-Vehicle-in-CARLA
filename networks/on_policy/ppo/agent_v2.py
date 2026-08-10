@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 # from encoder_init import EncodeState
 from networks.on_policy.ppo.ppo import ActorCritic
-from parameters import  *
+from parameters import *
 
 device = torch.device("cpu")
 
@@ -57,11 +57,20 @@ class PPOAgent(object):
         with torch.no_grad():
             if isinstance(obs, np.ndarray):
                 obs = torch.tensor(obs, dtype=torch.float)
-            action, logprob = self.old_policy.get_action_and_log_prob(obs.to(device))
+
+            obs = obs.to(device)
+
         if train:
-            self.memory.observation.append(obs.to(device))
+            # TRAIN: cần exploration
+            action, logprob = self.old_policy.get_action_and_log_prob(obs)
+
+            self.memory.observation.append(obs)
             self.memory.actions.append(action)
             self.memory.log_probs.append(logprob)
+
+        else:
+            # TEST: deterministic, KHÔNG sample random
+            action = self.old_policy.actor(obs)
 
         return action.detach().cpu().numpy().flatten()
     
