@@ -1,32 +1,25 @@
-d# Python virtual environments
+# Python virtual environment
 .venv/
 venv/
-env/
 
 # Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 
-# IDE
-.vscode/
-.idea/
+# Training logs
+runs/
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Trained AI models / checkpoints
+# Large model/checkpoint files
 *.pth
 *.pt
 *.ckpt
 *.engine
 
-# Temporary files
-*.log
-*.tmp
+# IDE
+.vscode/
+.idea/
 
-# Python build
-build/
-dist/
-*.egg-info/
+# OS files
+.DS_Store
+Thumbs.db
