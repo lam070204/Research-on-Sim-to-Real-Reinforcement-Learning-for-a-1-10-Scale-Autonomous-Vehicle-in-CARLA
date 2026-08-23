@@ -11,7 +11,16 @@ from simulation.settings import *
 
 class CarlaEnvironment():
 
-    def __init__(self, client, world, town, checkpoint_frequency=100, continuous_action=True) -> None:
+    def __init__(
+        self,
+        client,
+        world,
+        town,
+        checkpoint_frequency=100,
+        continuous_action=True,
+        collect_rgb_dataset=False,
+        safe_spawn_numbers=None,
+    ) -> None:
 
 
         self.client = client
@@ -29,18 +38,51 @@ class CarlaEnvironment():
         self.checkpoint_frequency = checkpoint_frequency
         self.route_waypoints = None
         self.town = town
+        self.collect_rgb_dataset = bool(collect_rgb_dataset)
 
-        # Spawn manager: use every spawn point before reshuffling.
+        # Các số spawn dùng để train. Số bắt đầu từ 1 giống log hiển thị.
+        # Map mapden có 12 spawn; ưu tiên các spawn nằm trên đoạn thẳng.
+        if safe_spawn_numbers is None:
+            safe_spawn_numbers = [1, 4, 6, 7, 8, 9, 10, 11]
+
+        self.safe_spawn_numbers = list(safe_spawn_numbers)
+
+        # Spawn manager: chỉ dùng các spawn an toàn trước khi reshuffle.
         self.spawn_points = list(self.map.get_spawn_points())
         if not self.spawn_points:
             raise RuntimeError(
                 "Map hiện tại không có spawn point. "
                 "Hãy kiểm tra OpenDRIVE/RoadRunner."
             )
-        self.spawn_order = list(range(len(self.spawn_points)))
+        self.safe_spawn_indices = []
+        for spawn_number in self.safe_spawn_numbers:
+            index = int(spawn_number) - 1
+            if 0 <= index < len(self.spawn_points):
+                self.safe_spawn_indices.append(index)
+            else:
+                print(
+                    "WARNING: bỏ qua spawn {} vì map chỉ có {} spawn.".format(
+                        spawn_number,
+                        len(self.spawn_points),
+                    )
+                )
+
+        if not self.safe_spawn_indices:
+            raise RuntimeError(
+                "Danh sách safe spawn rỗng hoặc không hợp lệ."
+            )
+
+        self.spawn_order = list(self.safe_spawn_indices)
         random.shuffle(self.spawn_order)
         self.spawn_cursor = 0
         self.current_spawn_index = None
+
+        print(
+            "SAFE SPAWNS:",
+            [index + 1 for index in self.safe_spawn_indices],
+            "| COLLECT RGB DATASET:",
+            self.collect_rgb_dataset,
+        )
 
         # Give the vehicle time to settle on the road before PPO controls it.
         self.spawn_settle_seconds = 1.5
@@ -88,15 +130,19 @@ class CarlaEnvironment():
             self.image_obs = self.camera_obj.front_camera.pop(-1)
             self.sensor_list.append(self.camera_obj.sensor)
 
-            # RGB camera used only to collect the new training dataset.
-            # The semantic camera above remains the PPO observation source.
-            self.rgb_dataset_obj = RGBDatasetCamera(
-                self.vehicle,
-                save_every=5,
-                max_images=20000,
-                test_interval=10,
-            )
-            self.sensor_list.append(self.rgb_dataset_obj.sensor)
+            # RGB camera chỉ được tạo khi bật chế độ thu dataset.
+            # Trong giai đoạn train PPO semantic, để False nhằm giảm tải CARLA
+            # và không lưu dữ liệu trước khi model chạy ổn.
+            if self.collect_rgb_dataset:
+                self.rgb_dataset_obj = RGBDatasetCamera(
+                    self.vehicle,
+                    save_every=5,
+                    max_images=20000,
+                    test_interval=10,
+                )
+                self.sensor_list.append(self.rgb_dataset_obj.sensor)
+            else:
+                self.rgb_dataset_obj = None
 
             # Third person view of our vehicle in the Simulated env
             if self.display_on:
@@ -443,8 +489,12 @@ class CarlaEnvironment():
 
 
     def get_next_spawn_transform(self):
-        """Return the next spawn point without repeating points prematurely."""
+        """
+        Lần lượt dùng toàn bộ SAFE SPAWNS.
+        Khi đã dùng hết danh sách, hệ thống trộn thứ tự rồi chạy lại.
+        """
         if self.spawn_cursor >= len(self.spawn_order):
+            self.spawn_order = list(self.safe_spawn_indices)
             random.shuffle(self.spawn_order)
             self.spawn_cursor = 0
 
@@ -454,12 +504,19 @@ class CarlaEnvironment():
 
         original = self.spawn_points[index]
 
-        # Create a copy so the original map spawn point is not modified.
+        print(
+            "\nĐang sử dụng spawn point {}/{} | safe list: {}".format(
+                index + 1,
+                len(self.spawn_points),
+                [i + 1 for i in self.safe_spawn_indices],
+            )
+        )
+
         return carla.Transform(
             carla.Location(
                 x=original.location.x,
                 y=original.location.y,
-                z=original.location.z + 0.05,
+                z=original.location.z + 0.20,
             ),
             carla.Rotation(
                 pitch=original.rotation.pitch,
@@ -470,7 +527,7 @@ class CarlaEnvironment():
 
     def spawn_vehicle_safely(self, vehicle_bp):
         """Try each spawn point until the main vehicle is spawned."""
-        for _ in range(len(self.spawn_points)):
+        for _ in range(len(self.safe_spawn_indices)):
             transform = self.get_next_spawn_transform()
             vehicle = self.world.try_spawn_actor(vehicle_bp, transform)
 

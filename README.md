@@ -36,25 +36,25 @@ Dự án này triển khai một hệ thống lái tự động hoàn chỉnh ch
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        CARLA Environment                        │
-│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ RGB Camera  │  │ Collision    │  │ Navigation (state)   │   │
-│  │ 160x80x3    │  │ Sensor       │  │ - throttle           │   │
-│  │ @ 20 FPS    │  │              │  │ - speed              │   │
-│  └──────┬──────┘  └──────────────┘  │ - steer              │   │
-│         │                           │ - lateral distance   │   │
-│         │                           │ - heading error      │   │
-│         ▼                           └─────────────────────┘   │
-│  ┌─────────────────┐                                          │
-│  │ VAE Encoder     │                                          │
-│  │ (95-dim latent) │                                          │
-│  └────────┬────────┘                                          │
-│           │                                                    │
-│           ▼                                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              PPO Agent (Policy Network)                 │   │
-│  │  Input: latent (95) + navigation (5) = 100 dimensions   │   │
-│  │  Output: continuous action (steer, throttle)            │   │
-│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────────┐    │
+│  │ RGB Camera  │  │ Collision    │  │ Navigation (state)   │    │
+│  │ 160x80x3    │  │ Sensor       │  │ - throttle           │    │
+│  │ @ 20 FPS    │  │              │  │ - speed              │    │
+│  └──────┬──────┘  └──────────────┘  │ - steer              │    │
+│         │                           │ - lateral distance   │    │
+│         │                           │ - heading error      │    │
+│         ▼                           └───────────────────── ┘     │
+│  ┌─────────────────┐                                            │
+│  │ VAE Encoder     │                                            │
+│  │ (95-dim latent) │                                            │
+│  └────────┬────────┘                                            │
+│           │                                                     │
+│           ▼                                                     │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              PPO Agent (Policy Network)                 │    │
+│  │  Input: latent (95) + navigation (5) = 100 dimensions   │    │
+│  │  Output: continuous action (steer, throttle)            │    │
+│  └─────────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
