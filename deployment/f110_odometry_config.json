@@ -1,0 +1,32 @@
+{
+  "wheel_radius_m": 0.05,
+  "rear_track_width_m": 0.29,
+  "ticks_per_revolution": 2048,
+  "encoder_counter_modulus": null,
+  "encoder_signs": {
+    "front_left": 1.0,
+    "front_right": 1.0,
+    "rear_left": 1.0,
+    "rear_right": 1.0
+  },
+  "min_dt_s": 0.002,
+  "max_dt_s": 0.2,
+  "max_wheel_speed_m_s": 8.0,
+  "wheel_speed_filter_alpha": 0.35,
+  "wheel_speed_median_window": 3,
+  "stationary_speed_m_s": 0.025,
+  "stationary_gyro_rad_s": 0.025,
+  "stationary_accel_tolerance_m_s2": 0.35,
+  "stationary_required_samples": 15,
+  "axle_speed_disagreement_m_s": 0.35,
+  "left_right_accel_disagreement_m_s2": 4.0,
+  "yaw_acceleration_process_std": 1.5,
+  "gyro_bias_random_walk_std": 0.003,
+  "gyro_measurement_std": 0.025,
+  "wheel_yaw_measurement_std": 0.12,
+  "wheel_yaw_slip_measurement_std": 1.5,
+  "initial_gyro_bias_std": 0.1,
+  "initial_yaw_rate_std": 0.3,
+  "distance_noise_fraction": 0.02,
+  "distance_noise_floor_m": 0.001
+}
