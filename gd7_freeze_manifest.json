@@ -1,0 +1,112 @@
+{
+  "created_local": "2026-08-28T16:41:09.685197",
+  "frozen_expected": {
+    "camera_control_behavior": {
+      "camera_frame_reuse_between_50hz_ticks": true,
+      "carla_imu_sensor_tick": 0.0
+    },
+    "lateral": {
+      "dr_relative_half_range": 0.12,
+      "status": "CALIBRATED",
+      "steer_gain_negative": 1.4639,
+      "steer_gain_positive": 1.1245
+    },
+    "ppo_contract": {
+      "action_dim": 2,
+      "action_semantics": [
+        "steer_normalized_-1_to_1",
+        "speed_cmd_real_equivalent_mps_0_to_1"
+      ],
+      "obs_dim": 100,
+      "prev_command_semantics": "logical_applied_command",
+      "vae_latent_dim": 95
+    },
+    "timing": {
+      "camera_fps": 30.0,
+      "command_tx_hz": 50.0,
+      "control_dt_s": 0.02,
+      "control_hz": 50.0,
+      "encoder_hz": 50.0,
+      "extra_command_delay_nominal_ticks": 0,
+      "extra_command_delay_one_tick_probability": 0.25,
+      "extra_command_delay_range_ticks": [
+        0,
+        1
+      ],
+      "feedback_rx_hz": 50.0,
+      "imu_hz": 50.0,
+      "servo_feedback_hz": 50.0
+    }
+  },
+  "frozen_file_hashes": {
+    "domain_randomization_runtime_v3.py": "bf59d65c2e6ac0d4f33f822d6b4b16ef94b3f039417ee90fbbf292dad49de8d5",
+    "observation_builder_rgb_v3.py": "b3531e25e116fb2f3b793a11ec1d722462cea189db7b6d1cb14d4ffbe3d248e7",
+    "simulation/carla_environment_rgb_v3.py": "e63fbb10f5bef9bcc40fe507d468c2c0e5f031a2e9aabb28289a9119413e1634",
+    "simulation/carla_sensors_v3.py": "5e87f27327e1626ad9a38d4a2c166d56a2c01dc38913ab60ccf96d3cd3fcb7d2",
+    "simulation/simulation_settings_v3.py": "719737bae742f34488ed33d695e83d657f31f19cbcbe097ec805116f38ccad00",
+    "train_ppo_rgb_v3.py": "f18beae71f0661e6a95241ea8af2f19d43718e643e7a717ec5a4f3f922177b86",
+    "vehicle_specs_v3.py": "d6100e736887d422af2123f3e13fb0efca8fa3b239782b8c367cd1d88fb2fe14"
+  },
+  "longitudinal_status": {
+    "freeze_required_before_official_final_ppo": true,
+    "real_ax": "PENDING",
+    "status": "PROVISIONAL_PENDING_REAL_AX"
+  },
+  "notes": [
+    "Do not edit frozen files without intentional GĐ7 re-freeze.",
+    "action_controller_v3.py may be revisited only for final longitudinal calibration after REAL ax is fixed.",
+    "domain_randomization_v3.py longitudinal nominal/ranges may be updated after REAL ax; frozen timing/lateral fields must remain unchanged.",
+    "Official final PPO remains blocked until longitudinal status becomes FROZEN."
+  ],
+  "project_root": "C:\\Autonomous-Driving-PPO-V3-Clean",
+  "provisional_file_hashes_at_freeze_time": {
+    "action_controller_v3.py": "544cd2fded4f299e7338d7522183742fcf0c9c092ef75522937fdd53a0b7fb56",
+    "domain_randomization_v3.py": "22031a4668d19c1230f650b17cf68fbfa084f9bf31f4836e8ddbb17a365399a1"
+  },
+  "schema": "gd7_freeze_manifest_v1",
+  "semantic_snapshot": {
+    "frozen": {
+      "camera_fps": 30.0,
+      "control_dt_s": 0.02,
+      "control_hz": 50.0,
+      "extra_command_delay_range_ticks": [
+        0,
+        1
+      ],
+      "extra_delay_one_tick_probability": 0.25,
+      "gear_switch_time_s": 0.0,
+      "steer_gain_negative": 1.4639,
+      "steer_gain_negative_range": [
+        1.288232,
+        1.6395680000000001
+      ],
+      "steer_gain_negative_relative_half_range": 0.12000000000000004,
+      "steer_gain_positive": 1.1245,
+      "steer_gain_positive_range": [
+        0.9895600000000001,
+        1.2594400000000001
+      ],
+      "steer_gain_positive_relative_half_range": 0.12,
+      "use_gear_autobox": true
+    },
+    "provisional_longitudinal": {
+      "max_brake_torque_nominal": 560.0,
+      "max_brake_torque_range": [
+        492.8,
+        627.2
+      ],
+      "torque_scale_nominal": 0.8,
+      "torque_scale_range": [
+        0.7400000000000001,
+        0.86
+      ]
+    }
+  },
+  "status": {
+    "gd4_lateral_yaw": "PASS_FROZEN",
+    "gd4_longitudinal": "PROVISIONAL_PENDING_REAL_AX",
+    "gd5_timing_latency": "PASS_FROZEN",
+    "gd6_domain_randomization": "PASS_FROZEN_ARCHITECTURE",
+    "gd7": "PARTIAL_FREEZE_PENDING_REAL_AX"
+  }
+}

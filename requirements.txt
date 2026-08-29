@@ -1,3 +1,14 @@
+'''
+python .\train_ppo_rgb_v3_verbose.py `
+  --train true `
+  --load-checkpoint false `
+  --print-every-steps 50
+  
+'''
+
+
+
+
 future==0.18.3
 numpy==1.21.1
 pygame==2.1.2

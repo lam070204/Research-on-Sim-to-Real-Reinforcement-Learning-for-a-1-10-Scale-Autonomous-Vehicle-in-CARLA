@@ -1,0 +1,4 @@
+initial_cmd_mps,final_cmd_mps,real_initial_steady_speed_mps,sim_initial_steady_speed_mps,initial_steady_error_mps,real_reached_speed_mean_mps,sim_reached_speed_mean_mps,real_reach_or_stop_time_ms,sim_reach_or_stop_time_ms,reach_time_error_ms,reach_time_error_pct,real_encoder_accel_to_measured_reach_m_s2,sim_encoder_accel_to_measured_reach_m_s2,real_imu_accel_mean_motion_corrected_m_s2,sim_carla_long_accel_mean_motion_m_s2
+0.5,0.0,0.4723069306930693,0.5134949791884028,0.04118804849533353,0.009600000000000001,nan,720.0,nan,nan,nan,-0.6426485148514851,nan,-0.48913243243243243,0.05817586480350203
+0.7,0.0,0.67,0.6994086614141292,0.029408661414129122,0.0,nan,1240.0,nan,nan,nan,-0.5403225806451614,nan,-0.42063127917833804,-0.20313036830336734
+0.7,0.5,0.6897227722772277,0.6931584321035414,0.003435659826313775,0.4924,nan,560.0,nan,nan,nan,-0.3523620933521922,nan,-0.24088546315077752,-0.053609459308636344

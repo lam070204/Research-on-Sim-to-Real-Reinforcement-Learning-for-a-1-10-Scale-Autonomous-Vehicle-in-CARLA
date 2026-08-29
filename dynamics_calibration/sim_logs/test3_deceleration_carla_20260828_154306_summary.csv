@@ -1,0 +1,4 @@
+initial_cmd_mps,final_cmd_mps,initial_steady_speed_mps,initial_steady_speed_std_mps,reached_speed_mean_mps,reach_or_stop_time_ms,encoder_accel_to_target_m_s2,encoder_accel_to_measured_reach_m_s2,carla_long_accel_mean_motion_m_s2,carla_long_accel_std_motion_m_s2,carla_long_accel_min_motion_m_s2,carla_long_accel_max_motion_m_s2,brake_mean_motion,brake_max_motion,throttle_mean_motion,reach_tolerance_mps,confirm_samples,reach_samples,motion_samples,samples
+0.5,0.0,0.19474249560167897,0.07070232211452789,nan,nan,nan,nan,0.33584089798790545,0.1073833646868876,-0.07812484497810859,0.4712585693584287,0.0,0.0,0.963250458240509,0.024,5,0,100,100
+0.7,0.0,0.0,0.0,0.0,0.0,nan,nan,0.0,0.0,-0.0,-0.0,1.0,1.0,0.0,0.024,5,5,1,100
+0.7,0.5,0.0,0.0,nan,nan,nan,nan,0.0,0.0,-0.0,-0.0,1.0,1.0,0.0,0.024,5,0,100,100
