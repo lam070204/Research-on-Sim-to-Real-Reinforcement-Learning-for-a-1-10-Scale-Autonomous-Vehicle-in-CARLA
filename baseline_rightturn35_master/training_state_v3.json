@@ -1,0 +1,10 @@
+{
+  "action_std": 0.19,
+  "checkpoint_path": "preTrained_models/ppo/automav3_rightturn35_multilightvae_v1\\ppo_policy_5_.pth",
+  "curriculum_stage": -1,
+  "desired_speed_mps": 0.35,
+  "episode": 243,
+  "global_step": 100000,
+  "saved_at": "2026-09-11T23:30:31",
+  "version": "TRAINER_V3_GD15"
+}

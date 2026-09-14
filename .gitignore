@@ -1,39 +1,21 @@
-# Virtual environment
 .venv/
-venv/
-
-# Python cache
 __pycache__/
 *.pyc
-*.pyo
 
-# Dataset / images
-dataset/
-datasets/
+# Dataset
 autoencoder_rgb/dataset*/
 *.png
 *.jpg
 *.jpeg
 
-# Models / policies / checkpoints
+# Model / policy
 *.pth
 *.pt
 *.ckpt
 *.engine
 preTrained_models/
-baseline_rightturn35_master/
 
-# Training logs
+# Logs
 runs/
-*.tfevents*
-
-# Generated outputs
-autoencoder_rgb/reconstructed*/
 logs/
-outputs/
-
-# IDE / OS
-.vscode/
-.idea/
-Thumbs.db
-.DS_Store
+*.tfevents*
