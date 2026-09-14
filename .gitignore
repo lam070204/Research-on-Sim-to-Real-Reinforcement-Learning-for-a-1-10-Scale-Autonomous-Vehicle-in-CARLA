@@ -1,25 +1,48 @@
-# Python virtual environment
+# Virtual environments
 .venv/
+.venv_old/
 venv/
+env/
 
-# Python cache
+# Cache
 __pycache__/
 *.pyc
 *.pyo
 
-# Training logs
-runs/
+# Backups
+_backup_before_v5/
+_backup_before_vae_v5_migration/
 
-# Large model/checkpoint files
+# Datasets
+dataset/
+datasets/
+autoencoder_rgb/dataset*/
+*.png
+*.jpg
+*.jpeg
+
+# Models / policies / checkpoints
 *.pth
 *.pt
 *.ckpt
 *.engine
+preTrained_models/
+checkpoints/
+baseline_rightturn35_master/
 
-# IDE
+# Training/evaluation output
+runs/
+logs/
+Log/
+oracle_results/
+*.tfevents*
+*.csv
+
+# Generated outputs
+autoencoder_rgb/reconstructed*/
+
+# IDE / OS
 .vscode/
 .idea/
-
-# OS files
-.DS_Store
 Thumbs.db
+.DS_Store

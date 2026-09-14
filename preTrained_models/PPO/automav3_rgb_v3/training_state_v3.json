@@ -1,10 +1,10 @@
 {
-  "action_std": 0.15999999999999998,
-  "checkpoint_path": "preTrained_models/ppo/automav3_rgb_v3\\ppo_policy_8_.pth",
-  "curriculum_stage": 0,
-  "desired_speed_mps": 0.4,
-  "episode": 802,
-  "global_step": 450000,
-  "saved_at": "2026-08-28T19:06:25",
+  "action_std": 0.05,
+  "checkpoint_path": "preTrained_models/ppo/automav3_rgb_v3\\ppo_policy_40_.pth",
+  "curriculum_stage": 3,
+  "desired_speed_mps": 1.0,
+  "episode": 1376,
+  "global_step": 2000000,
+  "saved_at": "2026-08-29T21:13:19",
   "version": "TRAINER_V3_GD15"
 }
