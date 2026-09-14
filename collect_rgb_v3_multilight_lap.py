@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-GĐ8 - Thu dataset RGB V3 bằng CARLA Traffic Manager Autopilot
+GĐ8 - Thu dataset RGB V3 đa ánh sáng theo từng vòng (lap) bằng CARLA Traffic Manager Autopilot
 với custom vehicle: vehicle.ty.automav3
 
 Mục tiêu:
@@ -57,14 +57,10 @@ FRONT_CAMERA_ROLL = sensors_v3.FRONT_CAMERA_ROLL
 
 # ================================================================
 # DATASET RGB V3
-# Lưu theo thư mục chứa chính file .py, không phụ thuộc thư mục
-# hiện tại của PowerShell khi chạy chương trình.
+# Lưu trực tiếp trong autoencoder_rgb/dataset_v3
 # ================================================================
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-
 RGB_DATASET_ROOT = os.path.join(
-    SCRIPT_DIR,
     "autoencoder_rgb",
     "dataset_v4",
 )
@@ -139,7 +135,72 @@ DEFAULT_STEER_NOISE_DEG = 0.5
 DEFAULT_STEER_NOISE_UPDATE_S = 2.0
 DEFAULT_STEER_NOISE_SMOOTHING = 0.20
 
+
 DEFAULT_SAFE_SPAWNS = [1, 2, 3, 4]
+
+# ================================================================
+# MULTI-LIGHTING PRESETS FOR VAE ROBUSTNESS
+# ================================================================
+
+LIGHTING_PRESETS = [
+    ("low_045_clear",   15.0,  45.0,  5.0),
+    ("low_135_clear",   15.0, 135.0,  5.0),
+    ("low_225_clear",   15.0, 225.0,  5.0),
+    ("low_315_clear",   15.0, 315.0,  5.0),
+
+    ("mid_045_clear",   30.0,  45.0, 10.0),
+    ("mid_135_clear",   30.0, 135.0, 10.0),
+    ("mid_225_clear",   30.0, 225.0, 10.0),
+    ("mid_315_clear",   30.0, 315.0, 10.0),
+
+    ("high_045_clear",  50.0,  45.0, 10.0),
+    ("high_135_clear",  50.0, 135.0, 10.0),
+    ("high_225_clear",  50.0, 225.0, 10.0),
+    ("high_315_clear",  50.0, 315.0, 10.0),
+
+    ("noon_soft",       70.0,  90.0, 35.0),
+    ("noon_cloudy",     70.0, 270.0, 65.0),
+    ("mid_cloudy_a",    35.0,  90.0, 55.0),
+    ("mid_cloudy_b",    35.0, 270.0, 55.0),
+]
+
+
+def apply_lighting_preset(world, preset_index):
+    """
+    Đổi ánh sáng vật lý trong CARLA theo từng session.
+    Chỉ thay mặt trời + mây, không thêm mưa/fog/wet road ở giai đoạn này.
+    """
+    preset_index = int(preset_index) % len(LIGHTING_PRESETS)
+    name, sun_altitude, sun_azimuth, cloudiness = LIGHTING_PRESETS[preset_index]
+
+    weather = world.get_weather()
+
+    weather.sun_altitude_angle = float(sun_altitude)
+    weather.sun_azimuth_angle = float(sun_azimuth)
+    weather.cloudiness = float(cloudiness)
+
+    weather.precipitation = 0.0
+    weather.precipitation_deposits = 0.0
+    weather.wetness = 0.0
+    weather.fog_density = 0.0
+    weather.fog_distance = 1000.0
+    weather.wind_intensity = 0.0
+
+    world.set_weather(weather)
+
+    print(
+        "LIGHTING | preset={}/{} | name={} | sun_alt={:.1f} | "
+        "sun_az={:.1f} | cloud={:.1f}".format(
+            preset_index,
+            len(LIGHTING_PRESETS) - 1,
+            name,
+            sun_altitude,
+            sun_azimuth,
+            cloudiness,
+        )
+    )
+
+    return preset_index, name
 
 
 # ================================================================
@@ -172,6 +233,17 @@ def speed_mps(vehicle):
         + velocity.y ** 2
         + velocity.z ** 2
     ) ** 0.5
+
+
+def location_distance(a, b):
+    """
+    Khoảng cách Euclidean giữa hai carla.Location.
+    Đơn vị là mét trong CARLA.
+    """
+    dx = float(a.x) - float(b.x)
+    dy = float(a.y) - float(b.y)
+    dz = float(a.z) - float(b.z)
+    return (dx * dx + dy * dy + dz * dz) ** 0.5
 
 
 def set_autopilot_target_speed(
@@ -612,6 +684,34 @@ def run_one_autopilot_session(
         last_report_time = 0.0
         previous_saved_count = camera_obj.saved_count
 
+        # ------------------------------------------------------------
+        # LAP DETECTION
+        #
+        # Một lap chỉ được công nhận khi:
+        # 1) xe đã đi ra xa điểm xuất phát ít nhất lap_leave_radius_m;
+        # 2) đã chạy tối thiểu lap_min_seconds;
+        # 3) tổng quãng đường tích lũy >= lap_min_distance_m;
+        # 4) quay lại trong bán kính lap_return_radius_m quanh điểm xuất phát.
+        #
+        # Cách này phù hợp map vòng kín và tránh trigger ngay lúc spawn.
+        # ------------------------------------------------------------
+        lap_start_location = vehicle.get_location()
+        lap_previous_location = lap_start_location
+        lap_distance_m = 0.0
+        lap_armed = False
+        lap_count = 0
+
+        if args.change_lighting_every_lap:
+            print(
+                "LAP MODE | leave_radius={:.1f} m | return_radius={:.1f} m | "
+                "min_time={:.1f}s | min_distance={:.1f} m".format(
+                    args.lap_leave_radius_m,
+                    args.lap_return_radius_m,
+                    args.lap_min_seconds,
+                    args.lap_min_distance_m,
+                )
+            )
+
         # Trạng thái steering noise hiện tại.
         target_steer_noise_deg = 0.0
         current_steer_noise_deg = 0.0
@@ -637,6 +737,48 @@ def run_one_autopilot_session(
 
             now = time.time()
             current_speed = speed_mps(vehicle)
+
+            current_location = vehicle.get_location()
+            step_distance = location_distance(
+                current_location,
+                lap_previous_location,
+            )
+
+            # Bỏ qua teleport/outlier bất thường khi respawn/physics giật.
+            if 0.0 <= step_distance <= 10.0:
+                lap_distance_m += step_distance
+
+            lap_previous_location = current_location
+
+            distance_to_lap_start = location_distance(
+                current_location,
+                lap_start_location,
+            )
+
+            if distance_to_lap_start >= args.lap_leave_radius_m:
+                lap_armed = True
+
+            if (
+                args.change_lighting_every_lap
+                and lap_armed
+                and (now - session_start) >= args.lap_min_seconds
+                and lap_distance_m >= args.lap_min_distance_m
+                and distance_to_lap_start <= args.lap_return_radius_m
+            ):
+                lap_count += 1
+                print(
+                    "\nLAP COMPLETE | lap={} | time={:.1f}s | "
+                    "distance={:.1f} m | dist_to_start={:.2f} m".format(
+                        lap_count,
+                        now - session_start,
+                        lap_distance_m,
+                        distance_to_lap_start,
+                    )
+                )
+                print(
+                    "-> Kết thúc vòng hiện tại để đổi sang preset ánh sáng tiếp theo."
+                )
+                return "LAP_COMPLETE"
 
             # Chọn target steering noise ngẫu nhiên mới theo chu kỳ.
             if (
@@ -688,7 +830,8 @@ def run_one_autopilot_session(
                     "images={}/{} | speed={:.2f} m/s | "
                     "steer_noise={:+.3f} deg ({:+.4f}) | "
                     "applied_steer={:+.3f} | "
-                    "session={:.1f}s | +{} images".format(
+                    "session={:.1f}s | lap_dist={:.1f}m | "
+                    "to_start={:.1f}m | armed={} | +{} images".format(
                         current_total,
                         args.max_images,
                         current_speed,
@@ -696,6 +839,9 @@ def run_one_autopilot_session(
                         current_steer_noise_norm,
                         current_applied_steer,
                         now - session_start,
+                        lap_distance_m,
+                        distance_to_lap_start,
+                        lap_armed,
                         new_images,
                     )
                 )
@@ -781,8 +927,11 @@ def parse_args():
     parser.add_argument(
         "--save-every",
         type=int,
-        default=5,
-        help="Lưu 1 ảnh sau mỗi N callback camera.",
+        default=1,
+        help=(
+            "Lưu 1 ảnh sau mỗi N callback camera. "
+            "FAST-SAFE mặc định=1; toàn bộ timing/control loop giữ nguyên file cũ."
+        ),
     )
     parser.add_argument(
         "--test-interval",
@@ -883,6 +1032,53 @@ def parse_args():
         ),
     )
     parser.add_argument(
+        "--change-lighting-every-lap",
+        action="store_true",
+        help=(
+            "Giữ nguyên một preset ánh sáng cho trọn một vòng. "
+            "Khi xe quay lại gần điểm xuất phát, kết thúc session và "
+            "chuyển preset kế tiếp."
+        ),
+    )
+    parser.add_argument(
+        "--lap-leave-radius-m",
+        type=float,
+        default=8.0,
+        help=(
+            "Xe phải đi xa điểm xuất phát ít nhất N mét CARLA "
+            "trước khi lap detector được arm. Mặc định 8.0."
+        ),
+    )
+    parser.add_argument(
+        "--lap-return-radius-m",
+        type=float,
+        default=3.0,
+        help=(
+            "Khi detector đã arm, quay lại trong bán kính N mét CARLA "
+            "quanh điểm xuất phát thì có thể tính hoàn thành vòng. "
+            "Mặc định 3.0."
+        ),
+    )
+    parser.add_argument(
+        "--lap-min-seconds",
+        type=float,
+        default=10.0,
+        help=(
+            "Thời gian tối thiểu trước khi được tính hoàn thành vòng. "
+            "Mặc định 10 giây."
+        ),
+    )
+    parser.add_argument(
+        "--lap-min-distance-m",
+        type=float,
+        default=15.0,
+        help=(
+            "Quãng đường CARLA tích lũy tối thiểu trước khi được tính "
+            "hoàn thành vòng. Mặc định 15 m."
+        ),
+    )
+
+    parser.add_argument(
         "--report-every-s",
         type=float,
         default=5.0,
@@ -897,6 +1093,22 @@ def parse_args():
             "Danh sách spawn đánh số từ 1. "
             "Ví dụ: --safe-spawns 1 4 6 7 8 9 10 11"
         ),
+    )
+
+    parser.add_argument(
+        "--lighting-mode",
+        choices=["cycle", "random", "fixed"],
+        default="cycle",
+        help=(
+            "cycle = lần lượt qua preset; random = ngẫu nhiên; "
+            "fixed = dùng --lighting-fixed-index."
+        ),
+    )
+    parser.add_argument(
+        "--lighting-fixed-index",
+        type=int,
+        default=0,
+        help="Preset ánh sáng dùng khi --lighting-mode fixed.",
     )
 
     parser.add_argument(
@@ -931,10 +1143,27 @@ def main():
             "--steer-noise-smoothing phải nằm trong (0, 1]"
         )
 
+    if args.lap_leave_radius_m <= 0.0:
+        raise ValueError("--lap-leave-radius-m phải > 0")
+
+    if args.lap_return_radius_m <= 0.0:
+        raise ValueError("--lap-return-radius-m phải > 0")
+
+    if args.lap_return_radius_m >= args.lap_leave_radius_m:
+        raise ValueError(
+            "--lap-return-radius-m phải nhỏ hơn --lap-leave-radius-m"
+        )
+
+    if args.lap_min_seconds < 0.0:
+        raise ValueError("--lap-min-seconds phải >= 0")
+
+    if args.lap_min_distance_m <= 0.0:
+        raise ValueError("--lap-min-distance-m phải > 0")
+
     random.seed(args.seed)
 
     print("=" * 78)
-    print("COLLECT RGB V3 - CARLA AUTOPILOT")
+    print("COLLECT RGB V3 - CARLA AUTOPILOT | FAST-SAFE")
     print("=" * 78)
     print("Vehicle :", VEHICLE_BLUEPRINT_ID)
     print(
@@ -997,6 +1226,23 @@ def main():
         )
     )
     print("Dataset :", RGB_DATASET_ROOT)
+    print(
+        "LIGHT   : mode={} | presets={} | fixed_index={}".format(
+            args.lighting_mode,
+            len(LIGHTING_PRESETS),
+            args.lighting_fixed_index,
+        )
+    )
+    print(
+        "LAP     : change_light_every_lap={} | leave={:.1f}m | "
+        "return={:.1f}m | min_time={:.1f}s | min_dist={:.1f}m".format(
+            args.change_lighting_every_lap,
+            args.lap_leave_radius_m,
+            args.lap_return_radius_m,
+            args.lap_min_seconds,
+            args.lap_min_distance_m,
+        )
+    )
     print("=" * 78)
 
     existing = count_dataset_images()
@@ -1057,6 +1303,8 @@ def main():
         pass
 
     session_index = 0
+    completed_laps = 0
+    lighting_cycle_index = 0
 
     try:
         while count_dataset_images() < args.max_images:
@@ -1072,6 +1320,36 @@ def main():
             )
             print("=" * 78)
 
+            if args.lighting_mode == "cycle":
+                if args.change_lighting_every_lap:
+                    lighting_index = lighting_cycle_index % len(LIGHTING_PRESETS)
+                else:
+                    lighting_index = (session_index - 1) % len(LIGHTING_PRESETS)
+            elif args.lighting_mode == "random":
+                lighting_index = random.randrange(len(LIGHTING_PRESETS))
+            else:
+                lighting_index = int(args.lighting_fixed_index) % len(LIGHTING_PRESETS)
+
+            if args.change_lighting_every_lap:
+                print(
+                    "LAP PLAN | completed_laps={} | current_preset_index={}".format(
+                        completed_laps,
+                        lighting_index,
+                    )
+                )
+
+            apply_lighting_preset(
+                world,
+                lighting_index,
+            )
+
+            # Cho shadow/weather ổn định vài tick trước khi capture.
+            for _ in range(3):
+                try:
+                    world.wait_for_tick(1.0)
+                except Exception:
+                    time.sleep(0.05)
+
             result = run_one_autopilot_session(
                 client,
                 world,
@@ -1084,6 +1362,26 @@ def main():
 
             if result == "DONE":
                 break
+
+            if result == "LAP_COMPLETE":
+                completed_laps += 1
+
+                if args.lighting_mode == "cycle":
+                    lighting_cycle_index += 1
+
+                print(
+                    "LAP SUMMARY | completed_laps={} | "
+                    "next_lighting_index={}".format(
+                        completed_laps,
+                        lighting_cycle_index % len(LIGHTING_PRESETS),
+                    )
+                )
+
+            elif args.change_lighting_every_lap:
+                print(
+                    "LAP NOT COMPLETE | result={} -> giữ nguyên preset "
+                    "ở lần thử tiếp theo.".format(result)
+                )
 
             time.sleep(0.5)
 
@@ -1133,7 +1431,36 @@ if __name__ == "__main__":
     main()
 
 
-    '''
-    python collect_rgb_v3_autopilot.py --max-images 4000 --save-every 10 --steer-noise-deg 0.5 --steer-noise-update-s 2.0 --steer-noise-smoothing 0.20
-    
-    '''
+
+# ================================================================
+# GỢI Ý CHẠY
+#
+# Smoke:
+# python .\collect_rgb_v3_multilight.py --max-images 300 --save-every 10 --real-target-speed-mps 0.4 --session-seconds 30 --lighting-mode cycle
+#
+# Thu chính, tiếp tục trên dataset_v4 hiện có:
+# python .\collect_rgb_v3_multilight.py --max-images 30000 --save-every 10 --real-target-speed-mps 0.4 --session-seconds 45 --steer-noise-deg 0.7 --lighting-mode cycle
+#
+# Test riêng một điều kiện ánh sáng:
+# python .\collect_rgb_v3_multilight.py --max-images 1000 --save-every 10 --real-target-speed-mps 0.4 --session-seconds 0 --steer-noise-deg 0.0 --lighting-mode fixed --lighting-fixed-index 0
+
+
+# ================================================================
+# LAP MODE EXAMPLE
+#
+# Mỗi vòng kín dùng đúng 1 preset ánh sáng; hoàn thành vòng mới đổi preset:
+#
+# python .\collect_rgb_v3_multilight_lap.py `
+#   --max-images 30000 `
+#   --save-every 10 `
+#   --real-target-speed-mps 0.20 `
+#   --session-seconds 0 `
+#   --steer-noise-deg 0 `
+#   --lighting-mode cycle `
+#   --change-lighting-every-lap
+#
+# Nếu detector chưa nhận vòng:
+# - xem log lap_dist / to_start / armed
+# - giảm --lap-min-distance-m nếu map rất nhỏ
+# - tăng --lap-return-radius-m nếu xe không đi sát đúng điểm spawn khi quay về
+# ================================================================

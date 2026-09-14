@@ -34,7 +34,7 @@ KL_BETA = 1e-4
 DATA_ROOT = os.path.join(
     PROJECT_ROOT,
     "autoencoder_rgb",
-    "dataset_v3",
+    "dataset_v4",
 )
 TRAIN_DIR = os.path.join(DATA_ROOT, "train")
 TEST_DIR = os.path.join(DATA_ROOT, "test")

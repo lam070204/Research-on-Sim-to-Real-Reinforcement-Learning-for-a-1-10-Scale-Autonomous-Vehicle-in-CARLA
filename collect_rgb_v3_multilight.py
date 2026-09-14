@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-GĐ8 - Thu dataset RGB V3 bằng CARLA Traffic Manager Autopilot
+GĐ8 - Thu dataset RGB V3 đa ánh sáng bằng CARLA Traffic Manager Autopilot
 với custom vehicle: vehicle.ty.automav3
 
 Mục tiêu:
@@ -57,14 +57,10 @@ FRONT_CAMERA_ROLL = sensors_v3.FRONT_CAMERA_ROLL
 
 # ================================================================
 # DATASET RGB V3
-# Lưu theo thư mục chứa chính file .py, không phụ thuộc thư mục
-# hiện tại của PowerShell khi chạy chương trình.
+# Lưu trực tiếp trong autoencoder_rgb/dataset_v3
 # ================================================================
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-
 RGB_DATASET_ROOT = os.path.join(
-    SCRIPT_DIR,
     "autoencoder_rgb",
     "dataset_v4",
 )
@@ -139,7 +135,72 @@ DEFAULT_STEER_NOISE_DEG = 0.5
 DEFAULT_STEER_NOISE_UPDATE_S = 2.0
 DEFAULT_STEER_NOISE_SMOOTHING = 0.20
 
+
 DEFAULT_SAFE_SPAWNS = [1, 2, 3, 4]
+
+# ================================================================
+# MULTI-LIGHTING PRESETS FOR VAE ROBUSTNESS
+# ================================================================
+
+LIGHTING_PRESETS = [
+    ("low_045_clear",   15.0,  45.0,  5.0),
+    ("low_135_clear",   15.0, 135.0,  5.0),
+    ("low_225_clear",   15.0, 225.0,  5.0),
+    ("low_315_clear",   15.0, 315.0,  5.0),
+
+    ("mid_045_clear",   30.0,  45.0, 10.0),
+    ("mid_135_clear",   30.0, 135.0, 10.0),
+    ("mid_225_clear",   30.0, 225.0, 10.0),
+    ("mid_315_clear",   30.0, 315.0, 10.0),
+
+    ("high_045_clear",  50.0,  45.0, 10.0),
+    ("high_135_clear",  50.0, 135.0, 10.0),
+    ("high_225_clear",  50.0, 225.0, 10.0),
+    ("high_315_clear",  50.0, 315.0, 10.0),
+
+    ("noon_soft",       70.0,  90.0, 35.0),
+    ("noon_cloudy",     70.0, 270.0, 65.0),
+    ("mid_cloudy_a",    35.0,  90.0, 55.0),
+    ("mid_cloudy_b",    35.0, 270.0, 55.0),
+]
+
+
+def apply_lighting_preset(world, preset_index):
+    """
+    Đổi ánh sáng vật lý trong CARLA theo từng session.
+    Chỉ thay mặt trời + mây, không thêm mưa/fog/wet road ở giai đoạn này.
+    """
+    preset_index = int(preset_index) % len(LIGHTING_PRESETS)
+    name, sun_altitude, sun_azimuth, cloudiness = LIGHTING_PRESETS[preset_index]
+
+    weather = world.get_weather()
+
+    weather.sun_altitude_angle = float(sun_altitude)
+    weather.sun_azimuth_angle = float(sun_azimuth)
+    weather.cloudiness = float(cloudiness)
+
+    weather.precipitation = 0.0
+    weather.precipitation_deposits = 0.0
+    weather.wetness = 0.0
+    weather.fog_density = 0.0
+    weather.fog_distance = 1000.0
+    weather.wind_intensity = 0.0
+
+    world.set_weather(weather)
+
+    print(
+        "LIGHTING | preset={}/{} | name={} | sun_alt={:.1f} | "
+        "sun_az={:.1f} | cloud={:.1f}".format(
+            preset_index,
+            len(LIGHTING_PRESETS) - 1,
+            name,
+            sun_altitude,
+            sun_azimuth,
+            cloudiness,
+        )
+    )
+
+    return preset_index, name
 
 
 # ================================================================
@@ -781,8 +842,11 @@ def parse_args():
     parser.add_argument(
         "--save-every",
         type=int,
-        default=5,
-        help="Lưu 1 ảnh sau mỗi N callback camera.",
+        default=1,
+        help=(
+            "Lưu 1 ảnh sau mỗi N callback camera. "
+            "FAST-SAFE mặc định=1; toàn bộ timing/control loop giữ nguyên file cũ."
+        ),
     )
     parser.add_argument(
         "--test-interval",
@@ -900,6 +964,22 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--lighting-mode",
+        choices=["cycle", "random", "fixed"],
+        default="cycle",
+        help=(
+            "cycle = lần lượt qua preset; random = ngẫu nhiên; "
+            "fixed = dùng --lighting-fixed-index."
+        ),
+    )
+    parser.add_argument(
+        "--lighting-fixed-index",
+        type=int,
+        default=0,
+        help="Preset ánh sáng dùng khi --lighting-mode fixed.",
+    )
+
+    parser.add_argument(
         "--seed",
         type=int,
         default=42,
@@ -934,7 +1014,7 @@ def main():
     random.seed(args.seed)
 
     print("=" * 78)
-    print("COLLECT RGB V3 - CARLA AUTOPILOT")
+    print("COLLECT RGB V3 - CARLA AUTOPILOT | FAST-SAFE")
     print("=" * 78)
     print("Vehicle :", VEHICLE_BLUEPRINT_ID)
     print(
@@ -997,6 +1077,13 @@ def main():
         )
     )
     print("Dataset :", RGB_DATASET_ROOT)
+    print(
+        "LIGHT   : mode={} | presets={} | fixed_index={}".format(
+            args.lighting_mode,
+            len(LIGHTING_PRESETS),
+            args.lighting_fixed_index,
+        )
+    )
     print("=" * 78)
 
     existing = count_dataset_images()
@@ -1072,6 +1159,25 @@ def main():
             )
             print("=" * 78)
 
+            if args.lighting_mode == "cycle":
+                lighting_index = (session_index - 1) % len(LIGHTING_PRESETS)
+            elif args.lighting_mode == "random":
+                lighting_index = random.randrange(len(LIGHTING_PRESETS))
+            else:
+                lighting_index = int(args.lighting_fixed_index) % len(LIGHTING_PRESETS)
+
+            apply_lighting_preset(
+                world,
+                lighting_index,
+            )
+
+            # Cho shadow/weather ổn định vài tick trước khi capture.
+            for _ in range(3):
+                try:
+                    world.wait_for_tick(1.0)
+                except Exception:
+                    time.sleep(0.05)
+
             result = run_one_autopilot_session(
                 client,
                 world,
@@ -1133,7 +1239,15 @@ if __name__ == "__main__":
     main()
 
 
-    '''
-    python collect_rgb_v3_autopilot.py --max-images 4000 --save-every 10 --steer-noise-deg 0.5 --steer-noise-update-s 2.0 --steer-noise-smoothing 0.20
-    
-    '''
+
+# ================================================================
+# GỢI Ý CHẠY
+#
+# Smoke:
+# python .\collect_rgb_v3_multilight.py --max-images 300 --save-every 10 --real-target-speed-mps 0.4 --session-seconds 30 --lighting-mode cycle
+#
+# Thu chính, tiếp tục trên dataset_v4 hiện có:
+# python .\collect_rgb_v3_multilight.py --max-images 30000 --save-every 10 --real-target-speed-mps 0.4 --session-seconds 45 --steer-noise-deg 0.7 --lighting-mode cycle
+#
+# Test riêng một điều kiện ánh sáng:
+# python .\collect_rgb_v3_multilight.py --max-images 1000 --save-every 10 --real-target-speed-mps 0.4 --session-seconds 0 --steer-noise-deg 0.0 --lighting-mode fixed --lighting-fixed-index 0

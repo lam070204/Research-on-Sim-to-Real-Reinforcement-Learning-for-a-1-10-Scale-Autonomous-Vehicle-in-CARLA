@@ -1,0 +1,24 @@
+﻿{
+    "version":  "MULTIMAP_RECOVERY_PLAN_V1",
+    "model_name":  "automav3_v4dr_2map_3m_recovery",
+    "total_steps":  3000000,
+    "block_steps":  100000,
+    "maps":  [
+                 "/Game/mapxanh/xanhphai",
+                 "/Game/xanhtrai/mapxanhdam"
+             ],
+    "safe_spawns":  "1,2,3,4",
+    "recovery_episode_probability":  0.3,
+    "recovery_min_episode_step":  700,
+    "recovery_stable_ticks":  100,
+    "recovery_stable_lateral_m":  0.04,
+    "recovery_stable_heading_deg":  5,
+    "recovery_stable_speed_mps":  0.4,
+    "recovery_duration_min_s":  0.1,
+    "recovery_duration_max_s":  0.16,
+    "recovery_steer_min":  0.1,
+    "recovery_steer_max":  0.18,
+    "recovery_control_hz":  50,
+    "recovery_success_hold_ticks":  8,
+    "recovery_max_events":  1
+}

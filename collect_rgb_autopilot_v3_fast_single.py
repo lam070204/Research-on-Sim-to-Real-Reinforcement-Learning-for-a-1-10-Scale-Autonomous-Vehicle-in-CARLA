@@ -57,14 +57,10 @@ FRONT_CAMERA_ROLL = sensors_v3.FRONT_CAMERA_ROLL
 
 # ================================================================
 # DATASET RGB V3
-# Lưu theo thư mục chứa chính file .py, không phụ thuộc thư mục
-# hiện tại của PowerShell khi chạy chương trình.
+# Lưu trực tiếp trong autoencoder_rgb/dataset_v3
 # ================================================================
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-
 RGB_DATASET_ROOT = os.path.join(
-    SCRIPT_DIR,
     "autoencoder_rgb",
     "dataset_v4",
 )
@@ -781,8 +777,11 @@ def parse_args():
     parser.add_argument(
         "--save-every",
         type=int,
-        default=5,
-        help="Lưu 1 ảnh sau mỗi N callback camera.",
+        default=1,
+        help=(
+            "Lưu 1 ảnh sau mỗi N callback camera. "
+            "FAST-SAFE mặc định=1; toàn bộ timing/control loop giữ nguyên file cũ."
+        ),
     )
     parser.add_argument(
         "--test-interval",
@@ -934,7 +933,7 @@ def main():
     random.seed(args.seed)
 
     print("=" * 78)
-    print("COLLECT RGB V3 - CARLA AUTOPILOT")
+    print("COLLECT RGB V3 - CARLA AUTOPILOT | FAST-SAFE")
     print("=" * 78)
     print("Vehicle :", VEHICLE_BLUEPRINT_ID)
     print(
@@ -1134,6 +1133,6 @@ if __name__ == "__main__":
 
 
     '''
-    python collect_rgb_v3_autopilot.py --max-images 4000 --save-every 10 --steer-noise-deg 0.5 --steer-noise-update-s 2.0 --steer-noise-smoothing 0.20
+   python .\collect_rgb_autopilot_v3.py --max-images 4000 --save-every 10 --steer-noise-deg 0 --real-target-speed-mps 0.4 --session-seconds 0
     
     '''

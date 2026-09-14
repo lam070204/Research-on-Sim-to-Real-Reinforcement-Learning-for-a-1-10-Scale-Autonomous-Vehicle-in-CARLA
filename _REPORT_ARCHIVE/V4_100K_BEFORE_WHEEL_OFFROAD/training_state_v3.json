@@ -1,0 +1,10 @@
+{
+  "action_std": 0.19,
+  "checkpoint_path": "preTrained_models/ppo/automav3_rgb_v4_vision_dr\\ppo_policy_2_.pth",
+  "curriculum_stage": 0,
+  "desired_speed_mps": 0.4,
+  "episode": 506,
+  "global_step": 150000,
+  "saved_at": "2026-08-30T13:51:31",
+  "version": "TRAINER_V3_GD15"
+}

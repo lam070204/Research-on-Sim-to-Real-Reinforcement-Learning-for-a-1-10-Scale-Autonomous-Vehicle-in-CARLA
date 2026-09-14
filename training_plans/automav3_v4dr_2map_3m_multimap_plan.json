@@ -1,0 +1,11 @@
+﻿{
+    "version":  "MULTIMAP_PLAN_V1",
+    "model_name":  "automav3_v4dr_2map_3m",
+    "total_steps":  3000000,
+    "block_steps":  100000,
+    "maps":  [
+                 "/Game/mapxanh/xanhphai",
+                 "/Game/xanhtrai/mapxanhdam"
+             ],
+    "safe_spawns":  "1,2,3,4"
+}
